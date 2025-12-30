@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthAI Pulse Aggregator | Healthcare IT & AI Intelligence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>HealthAI</h1>
+                        <span class="logo-subtitle">Pulse Aggregator</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-label">Navigation</div>
+                    <button class="nav-item active" data-view="feed">
+                        <div class="nav-item-content">
+                            <i class="fas fa-bolt"></i>
+                            <span>AI Live Feed</span>
+                        </div>
+                        <span class="unread-count" id="unread-count">0</span>
+                    </button>
+                    <button class="nav-item" data-view="bookmarks">
+                        <div class="nav-item-content">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Research Vault</span>
+                        </div>
+                    </button>
+                    <button class="nav-item" data-view="admin">
+                        < class="nav-item-content">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Admin Settings</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-label">Focus Areas</div>
+                    <button class="nav-item active" data-source="all">
+                        <div class="nav-item-content">
+                            <i class="fas fa-layer-group"></i>
+                            <span>All AI Topics</span>
+                        </div>
+                    </button>
+                    <div id="source-list">
+                        <!-- Sources will be loaded here -->
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="footer-label">Specialized Healthcare AI</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Search Health IT & AI breakthroughs...">
+                    </div>
+                    <button id="refresh-btn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="refresh-text">Refresh</span>
+                    </button>
+                </div>
+                <div class="header-status">
+                    <div class="scanner-status">
+                        <span class="status-dot"></span>
+                        AI SCANNER ACTIVE
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area custom-scrollbar">
+                <!-- Admin Panel (Hidden by default) -->
+                <div id="admin-panel" class="admin-panel hidden">
+                    <!-- Admin content will be loaded here -->
+                </div>
+
+                <!-- Feed Content -->
+                <div id="feed-content">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2 id="feed-title">Healthcare IT & AI Intelligence</h2>
+                            <p id="feed-subtitle">Monitoring specialized Artificial Intelligence developments in Healthcare.</p>
+                        </div>
+                        <button id="reset-filter-btn" class="reset-filter-btn hidden">
+                            Reset AI Filter
+                        </button>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loading-state" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Analyzing Healthcare IT data streams for AI...</p>
+                    </div>
+
+                    <!-- Articles Grid -->
+                    <div id="articles-grid" class="articles-grid hidden">
+                        <!-- Articles will be loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state hidden">
+                        <div class="empty-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3>No specialized AI news found</h3>
+                        <p>The scanner is looking for AI-specific breakthroughs within Healthcare IT Today. Try resetting filters.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Article Card Template -->
+    <template id="article-template">
+        <div class="article-card">
+            <div class="article-body">
+                <div class="article-header">
+                    <span class="article-source"></span>
+                    <button class="bookmark-btn">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </div>
+                <h3 class="article-title">
+                    <a href="#" target="_blank" rel="noopener noreferrer"></a>
+                </h3>
+                <div class="article-meta">
+                    <span class="article-date">
+                        <i class="far fa-calendar"></i>
+                        <span class="date-text"></span>
+                    </span>
+                    <span class="article-author">
+                        <i class="far fa-user"></i>
+                        <span class="author-text"></span>
+                    </span>
+                </div>
+                <p class="article-summary"></p>
+                
+                <div class="ai-insight hidden">
+                    <div class="ai-header">
+                        <i class="fas fa-sparkles"></i>
+                        AI Insight
+                    </div>
+                    <p class="ai-text"></p>
+                </div>
+
+                <div class="article-tags">
+                    <!-- Tags will be added here -->
+                </div>
+            </div>
+            <div class="article-footer">
+                <button class="ai-insight-btn">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Get AI Insight
+                </button>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">
+                    Read Full
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <!-- Source Item Template -->
+    <template id="source-template">
+        <button class="nav-item source-item" data-source="">
+            <div class="nav-item-content">
+                <div class="source-dot"></div>
+                <span class="source-name"></span>
+            </div>
+        </button>
+    </template>
+
+    <!-- JavaScript Files -->
+    <script src="data/sources.js"></script>
+    <script src="data/constants.js"></script>
+    <script src="utils.js"></script>
+    <script src="rssService.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
