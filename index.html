@@ -144,7 +144,1042 @@
             letter-spacing: 0.05em;
             padding: 0 0.75rem;
             margin-bottom: 0.5rem;
-               // ===== CONSTANTS & DATA =====
+        }
+
+        .nav-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius);
+            background: none;
+            border: none;
+            color: var(--slate-600);
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        .nav-item:hover {
+            background-color: var(--slate-50);
+        }
+
+        .nav-item.active {
+            background-color: var(--emerald-50);
+            color: var(--emerald-700);
+            font-weight: 500;
+        }
+
+        .nav-item-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-item i {
+            width: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .unread-count {
+            background-color: var(--emerald-600);
+            color: white;
+            font-size: 0.625rem;
+            padding: 0.125rem 0.375rem;
+            border-radius: 9999px;
+            min-width: 1.25rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .source-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: var(--slate-300);
+        }
+
+        .nav-item.active .source-dot {
+            background-color: var(--emerald-500);
+        }
+
+        .source-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+
+        .sidebar-footer {
+            padding: 1rem;
+            border-top: 1px solid var(--slate-100);
+            text-align: center;
+        }
+
+        .footer-label {
+            font-size: 0.5625rem;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-header {
+            background-color: white;
+            border-bottom: 1px solid var(--slate-200);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex: 1;
+            max-width: 42rem;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--slate-400);
+            font-size: 0.875rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-xl);
+            background-color: var(--slate-50);
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--emerald-500);
+            box-shadow: 0 0 0 2px var(--emerald-100);
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--slate-100);
+            color: var(--slate-700);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-xl);
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background-color: var(--slate-200);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .refresh-btn i.fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .refresh-text {
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .refresh-text {
+                display: inline;
+            }
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+
+        .scanner-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--emerald-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: var(--emerald-500);
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            background-color: var(--slate-50);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: var(--slate-100);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--slate-300);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: var(--slate-400);
+        }
+
+        /* Feed Content */
+        .feed-header {
+            padding: 2rem 2rem 0;
+            max-width: 80rem;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .feed-title h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--slate-900);
+            letter-spacing: -0.025em;
+        }
+
+        .feed-title p {
+            color: var(--slate-500);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .reset-filter-btn {
+            color: var(--emerald-600);
+            font-size: 0.875rem;
+            font-weight: 700;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .reset-filter-btn:hover {
+            color: var(--emerald-700);
+        }
+
+        .reset-filter-btn.hidden {
+            display: none;
+        }
+
+        /* Loading State */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 4px solid var(--emerald-500);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-state p {
+            color: var(--slate-500);
+            font-weight: 500;
+        }
+
+        /* Articles Grid */
+        .articles-grid {
+            padding: 0 2rem 2rem;
+            max-width: 80rem;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .articles-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .articles-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Article Card */
+        .article-card {
+            background-color: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: box-shadow 0.2s;
+        }
+
+        .article-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .article-body {
+            padding: 1.25rem;
+            flex: 1;
+        }
+
+        .article-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .article-source {
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--blue-600);
+            background-color: var(--blue-50);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+        }
+
+        .bookmark-btn {
+            background: none;
+            border: none;
+            color: var(--slate-300);
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 1.125rem;
+        }
+
+        .bookmark-btn:hover {
+            color: var(--slate-500);
+        }
+
+        .bookmark-btn.active {
+            color: var(--amber-500);
+        }
+
+        .bookmark-btn.active i {
+            font-weight: 900;
+        }
+
+        .article-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--slate-800);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .article-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .article-title a:hover {
+            color: var(--blue-700);
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--slate-500);
+            margin-bottom: 1rem;
+        }
+
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .article-summary {
+            color: var(--slate-600);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* AI Insight */
+        .ai-insight {
+            background-color: var(--indigo-50);
+            border: 1px solid var(--indigo-100);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.625rem;
+            font-weight: 700;
+            color: var(--indigo-600);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .ai-text {
+            color: var(--slate-700);
+            font-size: 0.75rem;
+            font-style: italic;
+            line-height: 1.4;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Article Tags */
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-top: auto;
+        }
+
+        .article-tags span {
+            font-size: 0.625rem;
+            background-color: var(--slate-100);
+            color: var(--slate-500);
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+        }
+
+        /* Article Footer */
+        .article-footer {
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--slate-100);
+            background-color: var(--slate-50);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .ai-insight-btn,
+        .read-full-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .ai-insight-btn {
+            background-color: white;
+            border: 1px solid var(--indigo-200);
+            color: var(--indigo-600);
+        }
+
+        .ai-insight-btn:hover {
+            background-color: var(--indigo-50);
+        }
+
+        .ai-insight-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-insight-btn i.fa-spin {
+            animation: spin 1s linear infinite;
+        }
+
+        .read-full-btn {
+            background-color: var(--blue-600);
+            color: white;
+            border: none;
+            box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1);
+        }
+
+        .read-full-btn:hover {
+            background-color: var(--blue-700);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 6rem 2rem;
+            background-color: white;
+            border-radius: 1.5rem;
+            border: 2px dashed var(--slate-200);
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        .empty-icon {
+            background-color: var(--slate-50);
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .empty-icon i {
+            font-size: 3rem;
+            color: var(--slate-300);
+        }
+
+        .empty-state h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--slate-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--slate-500);
+            max-width: 20rem;
+            margin: 0 auto;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            padding: 2rem;
+            max-width: 64rem;
+            margin: 0 auto;
+        }
+
+        .admin-panel-content {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--slate-800);
+        }
+
+        .admin-header p {
+            color: var(--slate-500);
+        }
+
+        .admin-save-btn {
+            background-color: var(--blue-600);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .admin-save-btn:hover {
+            background-color: var(--blue-700);
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .admin-section {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .admin-section h3 {
+            font-weight: 700;
+            color: var(--slate-800);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .admin-section h4 {
+            font-weight: 600;
+            color: var(--slate-700);
+            margin: 1.5rem 0 1rem;
+            font-size: 0.875rem;
+        }
+
+        .admin-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-form label span {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--slate-500);
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-form input {
+            width: 100%;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-lg);
+            padding: 0.5rem;
+            outline: none;
+        }
+
+        .admin-form input:focus {
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 2px var(--blue-100);
+        }
+
+        .admin-note {
+            font-size: 0.625rem;
+            color: var(--slate-400);
+            margin-top: 0.5rem;
+        }
+
+        .status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+        }
+
+        .status-item span:first-child {
+            color: var(--slate-500);
+        }
+
+        .status-item span:last-child {
+            color: var(--slate-700);
+            font-weight: 500;
+        }
+
+        .sources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .source-item-admin {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border: 1px solid var(--slate-100);
+            border-radius: var(--radius-lg);
+            transition: background-color 0.2s;
+        }
+
+        .source-item-admin:hover {
+            background-color: var(--slate-50);
+        }
+
+        .source-name-admin {
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+
+        .source-url {
+            font-size: 0.75rem;
+            color: var(--slate-500);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 20rem;
+        }
+
+        .source-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .source-category {
+            background-color: var(--slate-100);
+            color: var(--slate-500);
+            font-size: 0.625rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .remove-source-btn {
+            background: none;
+            border: none;
+            color: var(--slate-300);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .remove-source-btn:hover {
+            color: #ef4444;
+        }
+
+        .add-source-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 640px) {
+            .form-row:first-child {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-row:last-child {
+                grid-template-columns: 1fr auto;
+            }
+        }
+
+        #add-source-btn {
+            background-color: var(--slate-800);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-lg);
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        #add-source-btn:hover {
+            background-color: var(--slate-900);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--slate-200);
+            }
+            
+            .sidebar-nav {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .nav-section {
+                min-width: fit-content;
+            }
+            
+            .main-header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .search-container {
+                max-width: 100%;
+            }
+            
+            .header-status {
+                margin-left: 0;
+            }
+            
+            .feed-header,
+            .articles-grid {
+                padding: 1rem;
+            }
+            
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>HealthAI</h1>
+                        <span class="logo-subtitle">Pulse Aggregator</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-label">Navigation</div>
+                    <button class="nav-item active" data-view="feed">
+                        <div class="nav-item-content">
+                            <i class="fas fa-bolt"></i>
+                            <span>AI Live Feed</span>
+                        </div>
+                        <span class="unread-count" id="unread-count">0</span>
+                    </button>
+                    <button class="nav-item" data-view="bookmarks">
+                        <div class="nav-item-content">
+                            <i class="fas fa-bookmark"></i>
+                            <span>Research Vault</span>
+                        </div>
+                    </button>
+                    <button class="nav-item" data-view="admin">
+                        <div class="nav-item-content">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Admin Settings</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-label">Focus Areas</div>
+                    <button class="nav-item active source-item" data-source="all">
+                        <div class="nav-item-content">
+                            <i class="fas fa-layer-group"></i>
+                            <span>All AI Topics</span>
+                        </div>
+                    </button>
+                    <div id="source-list">
+                        <!-- Sources will be loaded here -->
+                    </div>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="footer-label">Specialized Healthcare AI</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Search Health IT & AI breakthroughs...">
+                    </div>
+                    <button id="refresh-btn" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                        <span class="refresh-text">Refresh</span>
+                    </button>
+                </div>
+                <div class="header-status">
+                    <div class="scanner-status">
+                        <span class="status-dot"></span>
+                        AI SCANNER ACTIVE
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area custom-scrollbar">
+                <!-- Admin Panel (Hidden by default) -->
+                <div id="admin-panel" class="admin-panel hidden">
+                    <!-- Admin content will be loaded here -->
+                </div>
+
+                <!-- Feed Content -->
+                <div id="feed-content">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2 id="feed-title">Healthcare IT & AI Intelligence</h2>
+                            <p id="feed-subtitle">Monitoring specialized Artificial Intelligence developments in Healthcare.</p>
+                        </div>
+                        <button id="reset-filter-btn" class="reset-filter-btn hidden">
+                            Reset AI Filter
+                        </button>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div id="loading-state" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Analyzing Healthcare IT data streams for AI...</p>
+                    </div>
+
+                    <!-- Articles Grid -->
+                    <div id="articles-grid" class="articles-grid hidden">
+                        <!-- Articles will be loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="empty-state" class="empty-state hidden">
+                        <div class="empty-icon">
+                            <i class="fas fa-microchip"></i>
+                        </div>
+                        <h3>No specialized AI news found</h3>
+                        <p>The scanner is looking for AI-specific breakthroughs within Healthcare IT Today. Try resetting filters.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Article Card Template -->
+    <template id="article-template">
+        <div class="article-card">
+            <div class="article-body">
+                <div class="article-header">
+                    <span class="article-source"></span>
+                    <button class="bookmark-btn">
+                        <i class="far fa-bookmark"></i>
+                    </button>
+                </div>
+                <h3 class="article-title">
+                    <a href="#" target="_blank" rel="noopener noreferrer"></a>
+                </h3>
+                <div class="article-meta">
+                    <span class="article-date">
+                        <i class="far fa-calendar"></i>
+                        <span class="date-text"></span>
+                    </span>
+                    <span class="article-author">
+                        <i class="far fa-user"></i>
+                        <span class="author-text"></span>
+                    </span>
+                </div>
+                <p class="article-summary"></p>
+                
+                <div class="ai-insight hidden">
+                    <div class="ai-header">
+                        <i class="fas fa-sparkles"></i>
+                        AI Insight
+                    </div>
+                    <p class="ai-text"></p>
+                </div>
+
+                <div class="article-tags">
+                    <!-- Tags will be added here -->
+                </div>
+            </div>
+            <div class="article-footer">
+                <button class="ai-insight-btn">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Get AI Insight
+                </button>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">
+                    Read Full
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== CONSTANTS & DATA =====
         const DEFAULT_SOURCES = [
             {
                 id: 'healthcare-it-today',
@@ -188,200 +1223,4 @@
                 id: 'sample3',
                 title: 'New Study: Machine Learning Predicts Patient Readmission Risk with 89% Accuracy',
                 link: 'https://ai-podcast.nejm.org/readmission-prediction',
-                pubDate: new Date(Date.now() - 172800000).toISOString(),
-                summary: 'Researchers have developed an ML model that analyzes electronic health records to predict which patients are likely to be readmitted.',
-                author: 'Clinical AI Journal',
-                categories: ['Machine Learning', 'Predictive Analytics', 'Clinical Research'],
-                sourceName: 'NEJM AI Podcast',
-                sourceUrl: 'https://ai-podcast.nejm.org/',
-                bookmarked: false
-            }
-        ];
-
-        // ===== STATE =====
-        let state = {
-            currentView: 'feed',
-            articles: [],
-            loading: false,
-            searchQuery: '',
-            activeSourceId: null
-        };
-
-        // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load sample articles after delay
-            setTimeout(() => {
-                loadSampleArticles();
-                setupEventListeners();
-            }, 1500);
-        });
-
-        // ===== SAMPLE ARTICLES LOADER =====
-        function loadSampleArticles() {
-            state.articles = SAMPLE_ARTICLES;
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('empty-state').classList.add('hidden');
-            document.getElementById('articles-grid').classList.remove('hidden');
-            
-            // Render articles
-            const grid = document.getElementById('articles-grid');
-            grid.innerHTML = '';
-            
-            SAMPLE_ARTICLES.forEach(article => {
-                const template = document.getElementById('article-template');
-                const clone = template.content.cloneNode(true);
-                const articleEl = clone.querySelector('.article-card');
-                
-                // Fill article data
-                articleEl.querySelector('.article-source').textContent = article.sourceName;
-                articleEl.querySelector('.article-title a').textContent = article.title;
-                articleEl.querySelector('.article-title a').href = article.link;
-                articleEl.querySelector('.date-text').textContent = new Date(article.pubDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-                articleEl.querySelector('.author-text').textContent = article.author;
-                articleEl.querySelector('.article-summary').textContent = article.summary;
-                articleEl.querySelector('.read-full-btn').href = article.link;
-                
-                // Tags
-                const tagsContainer = articleEl.querySelector('.article-tags');
-                article.categories.forEach(cat => {
-                    const tag = document.createElement('span');
-                    tag.textContent = cat;
-                    tagsContainer.appendChild(tag);
-                });
-                
-                // Bookmark
-                const bookmarkBtn = articleEl.querySelector('.bookmark-btn');
-                if (article.bookmarked) {
-                    bookmarkBtn.classList.add('active');
-                    bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
-                }
-                bookmarkBtn.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    this.innerHTML = this.classList.contains('active') ? 
-                        '<i class="fas fa-bookmark"></i>' : 
-                        '<i class="far fa-bookmark"></i>';
-                });
-                
-                // AI Insight button
-                const aiBtn = articleEl.querySelector('.ai-insight-btn');
-                aiBtn.addEventListener('click', function() {
-                    const insightEl = articleEl.querySelector('.ai-insight');
-                    if (!insightEl.classList.contains('hidden')) return;
-                    
-                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
-                    this.disabled = true;
-                    
-                    setTimeout(() => {
-                        insightEl.classList.remove('hidden');
-                        insightEl.querySelector('.ai-text').textContent = 
-                            "This demonstrates AI insight generation for healthcare content analysis. Real implementation would connect to Gemini API.";
-                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
-                        this.disabled = true;
-                    }, 1500);
-                });
-                
-                grid.appendChild(articleEl);
-            });
-        }
-
-        // ===== EVENT LISTENERS =====
-        function setupEventListeners() {
-            // Navigation
-            document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const view = this.dataset.view;
-                    if (view === 'admin') {
-                        showAdminPanel();
-                    } else {
-                        showFeed();
-                    }
-                });
-            });
-            
-            // Source filtering
-            document.querySelectorAll('.source-item').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.source-item').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-            
-            // Search
-            document.getElementById('search-input').addEventListener('input', function(e) {
-                state.searchQuery = e.target.value;
-                filterArticles();
-            });
-            
-            // Refresh
-            document.getElementById('refresh-btn').addEventListener('click', function() {
-                this.innerHTML = '<i class="fas fa-sync-alt fa-spin"></i> Refreshing...';
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-sync-alt"></i><span class="refresh-text">Refresh</span>';
-                    document.getElementById('loading-state').classList.remove('hidden');
-                    document.getElementById('articles-grid').classList.add('hidden');
-                    
-                    setTimeout(() => {
-                        loadSampleArticles();
-                    }, 1000);
-                }, 1500);
-            });
-            
-            // Reset filter
-            document.getElementById('reset-filter-btn').addEventListener('click', function() {
-                document.querySelectorAll('.source-item').forEach(b => b.classList.remove('active'));
-                document.querySelector('.source-item[data-source="all"]').classList.add('active');
-                this.classList.add('hidden');
-                filterArticles();
-            });
-        }
-
-        function filterArticles() {
-            const searchTerm = state.searchQuery.toLowerCase();
-            const articles = document.querySelectorAll('.article-card');
-            
-            articles.forEach(article => {
-                const title = article.querySelector('.article-title a').textContent.toLowerCase();
-                const summary = article.querySelector('.article-summary').textContent.toLowerCase();
-                const isVisible = title.includes(searchTerm) || summary.includes(searchTerm);
-                article.style.display = isVisible ? '' : 'none';
-            });
-        }
-
-        function showAdminPanel() {
-            document.getElementById('admin-panel').classList.remove('hidden');
-            document.getElementById('feed-content').classList.add('hidden');
-            
-            // Simple admin panel
-            document.getElementById('admin-panel').innerHTML = `
-                <div class="admin-panel-content">
-                    <h2>Admin Console</h2>
-                    <p>Healthcare AI Intelligence Platform v1.0</p>
-                    <div style="margin-top: 20px; padding: 20px; background: #f1f5f9; border-radius: 10px;">
-                        <h3>Features:</h3>
-                        <ul style="margin: 10px 0; padding-left: 20px;">
-                            <li>Sample AI healthcare articles</li>
-                            <li>Bookmark functionality</li>
-                            <li>AI insight generation simulation</li>
-                            <li>Source filtering</li>
-                            <li>Search functionality</li>
-                        </ul>
-                    </div>
-                    <button onclick="alert('Admin settings saved (demo)')" class="admin-save-btn" style="margin-top: 20px;">
-                        Save Demo Settings
-                    </button>
-                </div>
-            `;
-        }
-
-        function showFeed() {
-            document.getElementById('admin-panel').classList.add('hidden');
-            document.getElementById('feed-content').classList.remove('hidden');
-        }
-    </script>
+                pubDate
