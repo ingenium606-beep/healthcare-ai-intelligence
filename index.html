@@ -1188,10 +1188,25 @@
                 homepage: 'https://www.healthcareittoday.com/',
                 category: 'Health IT & AI',
                 enabled: true
+            },
+            {
+                id: 'nejm-ai-podcast',
+                name: 'NEJM AI Podcast',
+                url: 'https://ai-podcast.nejm.org/feed.xml',
+                homepage: 'https://ai-podcast.nejm.org/',
+                category: 'Clinical AI',
+                enabled: true
             }
         ];
 
-        const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning'];
+        const AI_KEYWORDS = [
+            'ai', 'artificial intelligence', 'machine learning', 'deep learning', 
+            'neural network', 'algorithm', 'automated', 'generative', 'llm', 
+            'gpt', 'nlp', 'computer vision', 'robotics', 'predictive modeling',
+            'data science', 'computational', 'chatbot', 'copilot'
+        ];
+
+        const CORS_PROXY = 'https://corsproxy.io/?';
 
         // ===== SAMPLE ARTICLES =====
         const SAMPLE_ARTICLES = [
@@ -1216,11 +1231,4 @@
                 author: 'Health System Weekly',
                 categories: ['AI Triage', 'Hospital Operations', 'Efficiency'],
                 sourceName: 'Healthcare IT Today',
-                sourceUrl: 'https://www.healthcareittoday.com/',
-                bookmarked: true
-            },
-            {
-                id: 'sample3',
-                title: 'New Study: Machine Learning Predicts Patient Readmission Risk with 89% Accuracy',
-                link: 'https://ai-podcast.nejm.org/readmission-prediction',
-                pubDate
+                sourceUrl: '
