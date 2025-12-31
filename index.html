@@ -144,7 +144,7 @@
             letter-spacing: 0.05em;
             padding: 0 0.75rem;
             margin-bottom: 0.5rem;
-        // ===== CONSTANTS & DATA =====
+               // ===== CONSTANTS & DATA =====
         const DEFAULT_SOURCES = [
             {
                 id: 'healthcare-it-today',
@@ -158,6 +158,46 @@
 
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning'];
 
+        // ===== SAMPLE ARTICLES =====
+        const SAMPLE_ARTICLES = [
+            {
+                id: 'sample1',
+                title: 'FDA Approves New AI Diagnostic Tool for Early Cancer Detection',
+                link: 'https://www.healthcareittoday.com/fda-ai-cancer-detection',
+                pubDate: new Date().toISOString(),
+                summary: 'The FDA has granted approval to an AI-based diagnostic system that can detect early-stage cancer with 95% accuracy from medical imaging.',
+                author: 'Medical Tech Review',
+                categories: ['AI Diagnostics', 'Regulatory', 'Oncology'],
+                sourceName: 'Healthcare IT Today',
+                sourceUrl: 'https://www.healthcareittoday.com/',
+                bookmarked: false
+            },
+            {
+                id: 'sample2',
+                title: 'Hospital Implements AI-Powered Triage System, Reduces Wait Times by 40%',
+                link: 'https://www.healthcareittoday.com/ai-triage-system',
+                pubDate: new Date(Date.now() - 86400000).toISOString(),
+                summary: 'A major hospital network has successfully deployed an AI triage system that prioritizes emergency cases, significantly improving patient flow.',
+                author: 'Health System Weekly',
+                categories: ['AI Triage', 'Hospital Operations', 'Efficiency'],
+                sourceName: 'Healthcare IT Today',
+                sourceUrl: 'https://www.healthcareittoday.com/',
+                bookmarked: true
+            },
+            {
+                id: 'sample3',
+                title: 'New Study: Machine Learning Predicts Patient Readmission Risk with 89% Accuracy',
+                link: 'https://ai-podcast.nejm.org/readmission-prediction',
+                pubDate: new Date(Date.now() - 172800000).toISOString(),
+                summary: 'Researchers have developed an ML model that analyzes electronic health records to predict which patients are likely to be readmitted.',
+                author: 'Clinical AI Journal',
+                categories: ['Machine Learning', 'Predictive Analytics', 'Clinical Research'],
+                sourceName: 'NEJM AI Podcast',
+                sourceUrl: 'https://ai-podcast.nejm.org/',
+                bookmarked: false
+            }
+        ];
+
         // ===== STATE =====
         let state = {
             currentView: 'feed',
@@ -169,13 +209,84 @@
 
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', function() {
-            // Show empty state
+            // Load sample articles after delay
             setTimeout(() => {
-                document.getElementById('loading-state').classList.add('hidden');
-                document.getElementById('empty-state').classList.remove('hidden');
+                loadSampleArticles();
                 setupEventListeners();
             }, 1500);
         });
+
+        // ===== SAMPLE ARTICLES LOADER =====
+        function loadSampleArticles() {
+            state.articles = SAMPLE_ARTICLES;
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('articles-grid').classList.remove('hidden');
+            
+            // Render articles
+            const grid = document.getElementById('articles-grid');
+            grid.innerHTML = '';
+            
+            SAMPLE_ARTICLES.forEach(article => {
+                const template = document.getElementById('article-template');
+                const clone = template.content.cloneNode(true);
+                const articleEl = clone.querySelector('.article-card');
+                
+                // Fill article data
+                articleEl.querySelector('.article-source').textContent = article.sourceName;
+                articleEl.querySelector('.article-title a').textContent = article.title;
+                articleEl.querySelector('.article-title a').href = article.link;
+                articleEl.querySelector('.date-text').textContent = new Date(article.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                articleEl.querySelector('.author-text').textContent = article.author;
+                articleEl.querySelector('.article-summary').textContent = article.summary;
+                articleEl.querySelector('.read-full-btn').href = article.link;
+                
+                // Tags
+                const tagsContainer = articleEl.querySelector('.article-tags');
+                article.categories.forEach(cat => {
+                    const tag = document.createElement('span');
+                    tag.textContent = cat;
+                    tagsContainer.appendChild(tag);
+                });
+                
+                // Bookmark
+                const bookmarkBtn = articleEl.querySelector('.bookmark-btn');
+                if (article.bookmarked) {
+                    bookmarkBtn.classList.add('active');
+                    bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+                }
+                bookmarkBtn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    this.innerHTML = this.classList.contains('active') ? 
+                        '<i class="fas fa-bookmark"></i>' : 
+                        '<i class="far fa-bookmark"></i>';
+                });
+                
+                // AI Insight button
+                const aiBtn = articleEl.querySelector('.ai-insight-btn');
+                aiBtn.addEventListener('click', function() {
+                    const insightEl = articleEl.querySelector('.ai-insight');
+                    if (!insightEl.classList.contains('hidden')) return;
+                    
+                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        insightEl.classList.remove('hidden');
+                        insightEl.querySelector('.ai-text').textContent = 
+                            "This demonstrates AI insight generation for healthcare content analysis. Real implementation would connect to Gemini API.";
+                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
+                        this.disabled = true;
+                    }, 1500);
+                });
+                
+                grid.appendChild(articleEl);
+            });
+        }
 
         // ===== EVENT LISTENERS =====
         function setupEventListeners() {
@@ -205,6 +316,7 @@
             // Search
             document.getElementById('search-input').addEventListener('input', function(e) {
                 state.searchQuery = e.target.value;
+                filterArticles();
             });
             
             // Refresh
@@ -213,12 +325,11 @@
                 setTimeout(() => {
                     this.innerHTML = '<i class="fas fa-sync-alt"></i><span class="refresh-text">Refresh</span>';
                     document.getElementById('loading-state').classList.remove('hidden');
-                    document.getElementById('empty-state').classList.add('hidden');
+                    document.getElementById('articles-grid').classList.add('hidden');
                     
                     setTimeout(() => {
-                        document.getElementById('loading-state').classList.add('hidden');
-                        document.getElementById('empty-state').classList.remove('hidden');
-                    }, 2000);
+                        loadSampleArticles();
+                    }, 1000);
                 }, 1500);
             });
             
@@ -227,6 +338,19 @@
                 document.querySelectorAll('.source-item').forEach(b => b.classList.remove('active'));
                 document.querySelector('.source-item[data-source="all"]').classList.add('active');
                 this.classList.add('hidden');
+                filterArticles();
+            });
+        }
+
+        function filterArticles() {
+            const searchTerm = state.searchQuery.toLowerCase();
+            const articles = document.querySelectorAll('.article-card');
+            
+            articles.forEach(article => {
+                const title = article.querySelector('.article-title a').textContent.toLowerCase();
+                const summary = article.querySelector('.article-summary').textContent.toLowerCase();
+                const isVisible = title.includes(searchTerm) || summary.includes(searchTerm);
+                article.style.display = isVisible ? '' : 'none';
             });
         }
 
@@ -238,8 +362,18 @@
             document.getElementById('admin-panel').innerHTML = `
                 <div class="admin-panel-content">
                     <h2>Admin Console</h2>
-                    <p>Basic functionality loaded. Full features coming soon.</p>
-                    <button onclick="alert('Settings saved!')" class="admin-save-btn">
+                    <p>Healthcare AI Intelligence Platform v1.0</p>
+                    <div style="margin-top: 20px; padding: 20px; background: #f1f5f9; border-radius: 10px;">
+                        <h3>Features:</h3>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li>Sample AI healthcare articles</li>
+                            <li>Bookmark functionality</li>
+                            <li>AI insight generation simulation</li>
+                            <li>Source filtering</li>
+                            <li>Search functionality</li>
+                        </ul>
+                    </div>
+                    <button onclick="alert('Admin settings saved (demo)')" class="admin-save-btn" style="margin-top: 20px;">
                         Save Demo Settings
                     </button>
                 </div>
@@ -250,34 +384,4 @@
             document.getElementById('admin-panel').classList.add('hidden');
             document.getElementById('feed-content').classList.remove('hidden');
         }
-
-        // Bookmark simulation
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.bookmark-btn')) {
-                const btn = e.target.closest('.bookmark-btn');
-                btn.classList.toggle('active');
-                btn.innerHTML = btn.classList.contains('active') ? 
-                    '<i class="fas fa-bookmark"></i>' : 
-                    '<i class="far fa-bookmark"></i>';
-            }
-            
-            if (e.target.closest('.ai-insight-btn')) {
-                const btn = e.target.closest('.ai-insight-btn');
-                const card = btn.closest('.article-card');
-                const insightEl = card.querySelector('.ai-insight');
-                
-                if (!insightEl.classList.contains('hidden')) return;
-                
-                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
-                btn.disabled = true;
-                
-                setTimeout(() => {
-                    insightEl.classList.remove('hidden');
-                    insightEl.querySelector('.ai-text').textContent = 
-                        "This demonstrates AI insight generation for healthcare content analysis.";
-                    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
-                    btn.disabled = true;
-                }, 1500);
-            }
-        });
     </script>
