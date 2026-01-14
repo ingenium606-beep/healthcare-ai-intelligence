@@ -857,6 +857,7 @@
             renderArticleList(displayArticles, grid, false);
         }
 
+        // ===== CODE B: FIXED RENDERVAULT FUNCTION =====
         function renderVault() {
             const grid = document.getElementById('vault-grid');
             const loading = document.getElementById('vault-loading');
@@ -864,12 +865,25 @@
             
             loading.classList.add('hidden');
             
-            const filters = state.vaultFilters;
-            let vaultArticles = [...state.articles, ...state.nejmArticles].filter(article => 
-                state.bookmarks.has(article.id)
-            );
+            // Get ALL articles from both feeds that are ACTUALLY bookmarked
+            let vaultArticles = [];
             
-            // Apply search filter
+            // Check real articles from feed
+            state.articles.forEach(article => {
+                if (state.bookmarks.has(article.id)) {
+                    vaultArticles.push(article);
+                }
+            });
+            
+            // Check NEJM articles
+            state.nejmArticles.forEach(article => {
+                if (state.bookmarks.has(article.id)) {
+                    vaultArticles.push(article);
+                }
+            });
+            
+            // Apply filters
+            const filters = state.vaultFilters;
             if (filters.search) {
                 vaultArticles = vaultArticles.filter(article => 
                     article.title.toLowerCase().includes(filters.search) || 
@@ -890,6 +904,7 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
+            // ... rest of the function remains the same
             // Use special vault template with delete button
             vaultArticles.forEach(article => {
                 const template = document.getElementById('vault-article-template');
@@ -1055,17 +1070,31 @@
             });
         }
 
+        // ===== CODE B: FIXED TOGGLEBOOKMARK FUNCTION =====
         function toggleBookmark(articleId, bookmarkBtn) {
             const wasBookmarked = state.bookmarks.has(articleId);
             
             if (wasBookmarked) {
+                // REMOVE from bookmarks
                 state.bookmarks.delete(articleId);
                 bookmarkBtn.classList.remove('active');
                 bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
+                
+                // Also remove from Vault display if we're in Vault view
+                if (state.currentView === 'vault') {
+                    const articleEl = document.querySelector(`#vault-grid .article-card[data-id="${articleId}"]`);
+                    if (articleEl) {
+                        articleEl.remove();
+                    }
+                }
             } else {
+                // ADD to bookmarks
                 state.bookmarks.add(articleId);
                 bookmarkBtn.classList.add('active');
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+                
+                // DO NOT automatically add to any storage array
+                // The Vault will display based on state.bookmarks only
             }
             
             // Update articles in state
@@ -1083,21 +1112,9 @@
             
             saveState();
             
-            // If we're in vault view and unbookmarking, remove from display
-            if (state.currentView === 'vault' && !state.bookmarks.has(articleId)) {
-                const articleEl = document.querySelector(`#vault-grid .article-card[data-id="${articleId}"]`);
-                if (articleEl) {
-                    articleEl.remove();
-                    
-                    // Check if vault is now empty
-                    const vaultGrid = document.getElementById('vault-grid');
-                    const vaultEmpty = document.getElementById('vault-empty');
-                    
-                    if (vaultGrid.children.length === 0) {
-                        vaultGrid.classList.add('hidden');
-                        vaultEmpty.classList.remove('hidden');
-                    }
-                }
+            // Refresh Vault view if we're in it
+            if (state.currentView === 'vault') {
+                renderVault();
             }
         }
 
