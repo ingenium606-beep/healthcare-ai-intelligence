@@ -222,13 +222,6 @@
         .empty-state h3 { font-size: 1.125rem; font-weight: 700; color: var(--slate-800); margin-bottom: 0.5rem; }
         .empty-state p { color: var(--slate-500); max-width: 20rem; margin: 0 auto; }
         
-        /* ===== LIBRARY VIEW ===== */
-        .library-view { padding: 2rem; max-width: 80rem; margin: 0 auto; }
-        .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
-        .library-item { background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-xl); padding: 1.5rem; }
-        .library-item h4 { margin-bottom: 0.5rem; color: var(--slate-800); }
-        .library-item p { color: var(--slate-600); font-size: 0.875rem; margin-bottom: 1rem; }
-        
         /* ===== 544 ANALYSIS VIEW ===== */
         .analysis-view { padding: 2rem; max-width: 80rem; margin: 0 auto; }
         .upload-area { 
@@ -269,6 +262,20 @@
             font-size: 1.25rem;
         }
         
+        /* ===== VAULT VIEW - DELETE BUTTON STYLING ===== */
+        .vault-delete-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+        .vault-delete-btn:hover {
+            background-color: rgba(239, 68, 68, 0.1);
+        }
+        
         @media (max-width: 768px) { 
             .app-container { flex-direction: column; } 
             .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--slate-200); } 
@@ -277,7 +284,7 @@
             .main-header { padding: 1rem; flex-direction: column; gap: 1rem; } 
             .search-container { max-width: 100%; } 
             .header-status { margin-left: 0; } 
-            .feed-header, .articles-grid, .library-view, .analysis-view { padding: 1rem; } 
+            .feed-header, .articles-grid, .analysis-view { padding: 1rem; } 
         }
     </style>
 </head>
@@ -306,14 +313,11 @@
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
                     </button>
-                    <button class="nav-item" data-view="library">
-                        <div class="nav-item-content"><i class="fas fa-book"></i><span>Library</span></div>
+                    <button class="nav-item" data-view="vault">
+                        <div class="nav-item-content"><i class="fas fa-vault"></i><span>Vault</span></div>
                     </button>
                     <button class="nav-item" data-view="analysis">
                         <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
-                    </button>
-                    <button class="nav-item" data-view="bookmarks">
-                        <div class="nav-item-content"><i class="fas fa-bookmark"></i><span>Research Vault</span></div>
                     </button>
                 </div>
                 <div class="nav-section">
@@ -399,19 +403,23 @@
                     </div>
                 </div>
 
-                <!-- LIBRARY VIEW -->
-                <div id="library-view" class="view-section">
-                    <div class="library-view">
-                        <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">Your Library</h2>
-                        <p style="color: var(--slate-500); margin-bottom: 2rem;">All your saved documents, reports, and bookmarked articles in one place.</p>
-                        <div id="library-grid" class="library-grid">
-                            <!-- Library items will be populated here -->
+                <!-- VAULT VIEW -->
+                <div id="vault-view" class="view-section">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2>Vault</h2>
+                            <p>Your saved articles and research. Click the trash icon to remove items.</p>
                         </div>
-                        <div id="library-empty" class="empty-state">
-                            <div class="empty-icon"><i class="fas fa-book"></i></div>
-                            <h3>Your library is empty</h3>
-                            <p>Bookmark articles or upload documents to build your library.</p>
-                        </div>
+                    </div>
+                    <div id="vault-loading" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading your saved articles...</p>
+                    </div>
+                    <div id="vault-grid" class="articles-grid hidden"></div>
+                    <div id="vault-empty" class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-vault"></i></div>
+                        <h3>Your Vault is empty</h3>
+                        <p>Bookmark articles by clicking the bookmark icon on any article.</p>
                     </div>
                 </div>
 
@@ -434,26 +442,6 @@
                                 <!-- Uploaded files will appear here -->
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- RESEARCH VAULT VIEW -->
-                <div id="bookmarks-view" class="view-section">
-                    <div class="feed-header">
-                        <div class="feed-title">
-                            <h2>Research Vault</h2>
-                            <p>Your bookmarked AI articles and research papers.</p>
-                        </div>
-                    </div>
-                    <div id="bookmarks-loading" class="loading-state">
-                        <div class="spinner"></div>
-                        <p>Loading your bookmarks...</p>
-                    </div>
-                    <div id="bookmarks-grid" class="articles-grid hidden"></div>
-                    <div id="bookmarks-empty" class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-bookmark"></i></div>
-                        <h3>No bookmarks yet</h3>
-                        <p>Bookmark articles by clicking the bookmark icon on any article.</p>
                     </div>
                 </div>
             </div>
@@ -486,13 +474,33 @@
         </div>
     </template>
 
-    <template id="library-item-template">
-        <div class="library-item">
-            <h4 class="library-title"></h4>
-            <p class="library-description"></p>
-            <div class="library-meta">
-                <small class="library-date"></small>
-                <small class="library-type"></small>
+    <template id="vault-article-template">
+        <div class="article-card" data-id="">
+            <div class="article-body">
+                <div class="article-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <span class="article-source"></span>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="bookmark-btn active"><i class="fas fa-bookmark"></i></button>
+                        <button class="vault-delete-btn" title="Remove from Vault">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <h3 class="article-title"><a href="#" target="_blank" rel="noopener noreferrer"></a></h3>
+                <div class="article-meta">
+                    <span class="article-date"><i class="far fa-calendar"></i><span class="date-text"></span></span>
+                    <span class="article-author"><i class="far fa-user"></i><span class="author-text"></span></span>
+                </div>
+                <p class="article-summary"></p>
+                <div class="ai-insight hidden">
+                    <div class="ai-header"><i class="fas fa-sparkles"></i>AI Insight</div>
+                    <p class="ai-text"></p>
+                </div>
+                <div class="article-tags"></div>
+            </div>
+            <div class="article-footer">
+                <button class="ai-insight-btn"><i class="fas fa-wand-magic-sparkles"></i>Get AI Insight</button>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">Read Full<i class="fas fa-external-link-alt"></i></a>
             </div>
         </div>
     </template>
@@ -524,7 +532,6 @@
             dateFilter: 'newest',
             config: { refreshInterval: 60, sources: DEFAULT_SOURCES },
             bookmarks: new Set(),
-            libraryItems: [],
             analysisFiles: []
         };
 
@@ -551,13 +558,9 @@
                 const savedBookmarks = localStorage.getItem('544_health_ai_bookmarks');
                 if (savedBookmarks) state.bookmarks = new Set(JSON.parse(savedBookmarks));
                 
-                const savedLibrary = localStorage.getItem('544_library');
-                if (savedLibrary) state.libraryItems = JSON.parse(savedLibrary);
-                
                 const savedAnalysis = localStorage.getItem('544_analysis');
                 if (savedAnalysis) state.analysisFiles = JSON.parse(savedAnalysis);
                 
-                updateLibraryDisplay();
                 updateAnalysisDisplay();
             } catch (e) { console.error('Load error:', e); }
         }
@@ -566,7 +569,6 @@
             try {
                 localStorage.setItem('544_health_ai_config', JSON.stringify(state.config));
                 localStorage.setItem('544_health_ai_bookmarks', JSON.stringify([...state.bookmarks]));
-                localStorage.setItem('544_library', JSON.stringify(state.libraryItems));
                 localStorage.setItem('544_analysis', JSON.stringify(state.analysisFiles));
             } catch (e) { console.error('Save error:', e); }
         }
@@ -585,8 +587,8 @@
                 document.getElementById(`${view}-view`).classList.add('active');
                 
                 // Update UI based on view
-                if (view === 'bookmarks') {
-                    renderBookmarks();
+                if (view === 'vault') {
+                    renderVault();
                 } else if (view === 'nejm') {
                     renderNEJMArticles();
                 } else if (view === 'feed') {
@@ -599,7 +601,7 @@
                 state.searchQuery = e.target.value.toLowerCase();
                 if (state.currentView === 'feed') renderArticles();
                 else if (state.currentView === 'nejm') renderNEJMArticles();
-                else if (state.currentView === 'bookmarks') renderBookmarks();
+                else if (state.currentView === 'vault') renderVault();
             });
 
             // Refresh button
@@ -612,7 +614,7 @@
                 state.dateFilter = this.value;
                 if (state.currentView === 'feed') renderArticles();
                 else if (state.currentView === 'nejm') renderNEJMArticles();
-                else if (state.currentView === 'bookmarks') renderBookmarks();
+                else if (state.currentView === 'vault') renderVault();
             });
         }
 
@@ -644,32 +646,6 @@
                 fileInput.value = '';
                 
                 alert(`Uploaded ${files.length} file(s) to 544 Analysis Hub`);
-            });
-        }
-
-        function updateLibraryDisplay() {
-            const container = document.getElementById('library-grid');
-            const empty = document.getElementById('library-empty');
-            
-            if (state.libraryItems.length === 0) {
-                container.innerHTML = '';
-                empty.style.display = 'block';
-                return;
-            }
-            
-            empty.style.display = 'none';
-            container.innerHTML = '';
-            
-            state.libraryItems.forEach(item => {
-                const template = document.getElementById('library-item-template');
-                const clone = template.content.cloneNode(true);
-                
-                clone.querySelector('.library-title').textContent = item.title;
-                clone.querySelector('.library-description').textContent = item.description;
-                clone.querySelector('.library-date').textContent = `Added: ${item.date}`;
-                clone.querySelector('.library-type').textContent = `Type: ${item.type}`;
-                
-                container.appendChild(clone);
             });
         }
 
@@ -931,7 +907,7 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
-            renderArticleList(displayArticles, grid);
+            renderArticleList(displayArticles, grid, false);
         }
 
         function renderNEJMArticles() {
@@ -960,32 +936,33 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
-            renderArticleList(displayArticles, grid);
+            renderArticleList(displayArticles, grid, false);
         }
 
-        function renderBookmarks() {
-            const grid = document.getElementById('bookmarks-grid');
-            const loading = document.getElementById('bookmarks-loading');
-            const empty = document.getElementById('bookmarks-empty');
+        function renderVault() {
+            const grid = document.getElementById('vault-grid');
+            const loading = document.getElementById('vault-loading');
+            const empty = document.getElementById('vault-empty');
             
             loading.classList.add('hidden');
             
-            let bookmarkedArticles = [...state.articles, ...state.nejmArticles].filter(article => 
+            // Get all bookmarked articles from both feeds
+            let vaultArticles = [...state.articles, ...state.nejmArticles].filter(article => 
                 state.bookmarks.has(article.id)
             );
             
             // Apply date filter
-            bookmarkedArticles = applyDateFilter(bookmarkedArticles);
+            vaultArticles = applyDateFilter(vaultArticles);
             
             // Apply search if any
             if (state.searchQuery) {
-                bookmarkedArticles = bookmarkedArticles.filter(article => 
+                vaultArticles = vaultArticles.filter(article => 
                     article.title.toLowerCase().includes(state.searchQuery) || 
                     article.summary.toLowerCase().includes(state.searchQuery)
                 );
             }
             
-            if (bookmarkedArticles.length === 0) {
+            if (vaultArticles.length === 0) {
                 grid.classList.add('hidden');
                 empty.classList.remove('hidden');
                 return;
@@ -995,10 +972,104 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
-            renderArticleList(bookmarkedArticles, grid);
+            // Use special vault template with delete button
+            vaultArticles.forEach(article => {
+                const template = document.getElementById('vault-article-template');
+                const clone = template.content.cloneNode(true);
+                const articleEl = clone.querySelector('.article-card');
+                
+                articleEl.dataset.id = article.id;
+                articleEl.querySelector('.article-source').textContent = article.sourceName;
+                
+                // Set up bookmark button (already active in vault)
+                const bookmarkBtn = articleEl.querySelector('.bookmark-btn');
+                bookmarkBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFromVault(article.id, articleEl);
+                });
+                
+                // Set up delete button
+                const deleteBtn = articleEl.querySelector('.vault-delete-btn');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFromVault(article.id, articleEl);
+                });
+                
+                const titleLink = articleEl.querySelector('.article-title a');
+                titleLink.textContent = article.title;
+                titleLink.href = article.link;
+                
+                articleEl.querySelector('.date-text').textContent = new Date(article.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                articleEl.querySelector('.author-text').textContent = article.author;
+                articleEl.querySelector('.article-summary').textContent = article.summary;
+                
+                const readFullBtn = articleEl.querySelector('.read-full-btn');
+                readFullBtn.href = article.link;
+                
+                const tagsContainer = articleEl.querySelector('.article-tags');
+                article.categories.slice(0, 3).forEach(cat => {
+                    const tag = document.createElement('span');
+                    tag.textContent = cat;
+                    tagsContainer.appendChild(tag);
+                });
+                
+                const aiBtn = articleEl.querySelector('.ai-insight-btn');
+                aiBtn.addEventListener('click', function() {
+                    const insightEl = articleEl.querySelector('.ai-insight');
+                    if (!insightEl.classList.contains('hidden')) return;
+                    
+                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        insightEl.classList.remove('hidden');
+                        insightEl.querySelector('.ai-text').textContent = 
+                            "AI analysis: This article discusses developments in healthcare AI with potential implications for clinical practice and patient outcomes.";
+                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
+                        this.disabled = true;
+                    }, 1500);
+                });
+                
+                grid.appendChild(articleEl);
+            });
         }
 
-        function renderArticleList(articles, container) {
+        function removeFromVault(articleId, articleEl) {
+            // Remove from bookmarks
+            state.bookmarks.delete(articleId);
+            
+            // Update articles in state
+            state.articles = state.articles.map(article => 
+                article.id === articleId ? { ...article, bookmarked: false } : article
+            );
+            
+            state.nejmArticles = state.nejmArticles.map(article => 
+                article.id === articleId ? { ...article, bookmarked: false } : article
+            );
+            
+            // Remove from UI
+            if (articleEl) {
+                articleEl.remove();
+            }
+            
+            // Check if vault is now empty
+            const vaultGrid = document.getElementById('vault-grid');
+            const vaultEmpty = document.getElementById('vault-empty');
+            
+            if (vaultGrid.children.length === 0) {
+                vaultGrid.classList.add('hidden');
+                vaultEmpty.classList.remove('hidden');
+            }
+            
+            saveState();
+        }
+
+        function renderArticleList(articles, container, isVault = false) {
             articles.forEach(article => {
                 const template = document.getElementById('article-template');
                 const clone = template.content.cloneNode(true);
@@ -1024,16 +1095,6 @@
                     } else {
                         bookmarkBtn.classList.remove('active');
                         bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
-                    }
-                    
-                    // If we're in bookmarks view, remove the article from display
-                    if (state.currentView === 'bookmarks') {
-                        articleEl.remove();
-                        // Check if empty
-                        if (container.children.length === 0) {
-                            document.getElementById('bookmarks-grid').classList.add('hidden');
-                            document.getElementById('bookmarks-empty').classList.remove('hidden');
-                        }
                     }
                 });
                 
@@ -1086,26 +1147,6 @@
                 state.bookmarks.delete(articleId);
             } else {
                 state.bookmarks.add(articleId);
-                
-                // Add to library items
-                const article = [...state.articles, ...state.nejmArticles].find(a => a.id === articleId);
-                if (article) {
-                    state.libraryItems.push({
-                        id: articleId,
-                        title: article.title,
-                        description: article.summary,
-                        date: new Date().toLocaleDateString(),
-                        type: 'Article',
-                        source: article.sourceName
-                    });
-                    
-                    // Keep only last 50 library items
-                    if (state.libraryItems.length > 50) {
-                        state.libraryItems = state.libraryItems.slice(-50);
-                    }
-                    
-                    updateLibraryDisplay();
-                }
             }
             
             // Update articles in state
@@ -1118,6 +1159,23 @@
             );
             
             saveState();
+            
+            // If we're in vault view and unbookmarking, remove from display
+            if (state.currentView === 'vault' && !state.bookmarks.has(articleId)) {
+                const articleEl = document.querySelector(`#vault-grid .article-card[data-id="${articleId}"]`);
+                if (articleEl) {
+                    articleEl.remove();
+                    
+                    // Check if vault is now empty
+                    const vaultGrid = document.getElementById('vault-grid');
+                    const vaultEmpty = document.getElementById('vault-empty');
+                    
+                    if (vaultGrid.children.length === 0) {
+                        vaultGrid.classList.add('hidden');
+                        vaultEmpty.classList.remove('hidden');
+                    }
+                }
+            }
         }
 
         function renderSidebar() {
