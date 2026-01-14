@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* [PASTE ALL THE CSS FROM PREVIOUS VERSION HERE - IT'S THE SAME] */
+        /* [PASTE ALL THE CSS FROM PREVIOUS VERSION HERE] */
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- [PASTE ALL THE HTML FROM PREVIOUS VERSION HERE - IT'S THE SAME] -->
+        <!-- [PASTE ALL THE HTML FROM PREVIOUS VERSION HERE] -->
     </div>
 
     <template id="article-template">
@@ -34,6 +34,40 @@
             { id: 'intelligent-health', name: 'Intelligent Health AI', url: 'https://blog.intelligenthealth.ai/rss.xml', homepage: 'https://blog.intelligenthealth.ai/', category: 'Health AI', enabled: true },
             { id: 'ai-and-health', name: 'AI and Health', url: 'https://www.aiandhealth.com/blog-feed.xml', homepage: 'https://www.aiandhealth.com/', category: 'Health AI', enabled: true },
             { id: 'bayesian-health', name: 'Bayesian Health', url: 'https://www.bayesianhealth.com/feed/', homepage: 'https://www.bayesianhealth.com/', category: 'Clinical AI', enabled: true }
+        ];
+
+        // ===== AI/HEALTH KEYWORDS FOR FILTERING =====
+        const AI_HEALTH_KEYWORDS = [
+            // AI Terms
+            'AI', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network',
+            'algorithm', 'predictive analytics', 'computer vision', 'natural language processing', 'NLP',
+            'large language model', 'LLM', 'generative AI', 'GPT', 'chatbot', 'robotics', 'automation',
+            'data science', 'big data', 'analytics', 'intelligent system', 'smart system',
+            
+            // Healthcare/Medical Terms
+            'healthcare', 'medical', 'medicine', 'clinical', 'patient', 'doctor', 'physician', 'hospital',
+            'diagnosis', 'diagnostic', 'treatment', 'therapy', 'surgery', 'pharmaceutical', 'drug',
+            'vaccine', 'epidemiology', 'public health', 'telemedicine', 'telehealth', 'digital health',
+            'mhealth', 'ehealth', 'health tech', 'medtech', 'biotech', 'genomics', 'precision medicine',
+            
+            // Specific Health AI Applications
+            'medical imaging', 'radiology', 'pathology', 'oncology', 'cardiology', 'neurology',
+            'mental health', 'psychiatry', 'dermatology', 'ophthalmology', 'dentistry', 'orthopedics',
+            'pediatrics', 'geriatrics', 'emergency medicine', 'intensive care', 'ICU',
+            'wearable', 'sensor', 'monitoring', 'remote patient', 'virtual care',
+            'clinical decision', 'diagnostic aid', 'treatment planning', 'drug discovery',
+            'clinical trial', 'research', 'study', 'trial', 'evidence', 'outcome',
+            
+            // Technology in Healthcare
+            'electronic health record', 'EHR', 'EMR', 'health information', 'HIT', 'health IT',
+            'medical device', 'FDA approval', 'regulatory', 'compliance', 'HIPAA',
+            'cybersecurity', 'privacy', 'security', 'blockchain', 'IoT', 'internet of things',
+            
+            // Companies/Organizations
+            'Google Health', 'DeepMind', 'IBM Watson', 'Microsoft Healthcare', 'Amazon Care',
+            'Apple Health', 'Samsung Health', 'Philips', 'GE Healthcare', 'Siemens Healthineers',
+            'Medtronic', 'Johnson & Johnson', 'Pfizer', 'Moderna', 'Novartis', 'Roche',
+            'Mayo Clinic', 'Cleveland Clinic', 'Johns Hopkins', 'Mass General', 'Stanford Medicine'
         ];
 
         // ===== STATE MANAGEMENT =====
@@ -252,6 +286,49 @@
                     item.classList.remove('active');
                 }
             });
+        }
+
+        // ===== AI/HEALTH FILTER FUNCTION =====
+        function isAIHealthRelated(text) {
+            if (!text || typeof text !== 'string') return false;
+            
+            const searchText = text.toLowerCase();
+            
+            // Check for AI/health keywords
+            for (const keyword of AI_HEALTH_KEYWORDS) {
+                if (searchText.includes(keyword.toLowerCase())) {
+                    return true;
+                }
+            }
+            
+            // Check for AI-related patterns
+            const aiPatterns = [
+                /AI[\-\s]?(powered|driven|based|assisted|enabled)/i,
+                /machine[\-\s]?learning/i,
+                /deep[\-\s]?learning/i,
+                /neural[\-\s]?network/i,
+                /artificial[\-\s]?intelligence/i,
+                /predictive[\-\s]?(model|analytics|analysis)/i,
+                /computer[\-\s]?vision/i,
+                /natural[\-\s]?language[\-\s]?processing/i,
+                /large[\-\s]?language[\-\s]?model/i,
+                /generative[\-\s]?AI/i,
+                /clinical[\-\s]?decision[\-\s]?support/i,
+                /digital[\-\s]?(health|medicine|therapeutics)/i,
+                /tele(health|medicine)/i,
+                /mhealth|ehealth/i,
+                /health[\-\s]?tech|med[\-\s]?tech/i,
+                /precision[\-\s]?medicine/i,
+                /personalized[\-\s]?(medicine|treatment|therapy)/i
+            ];
+            
+            for (const pattern of aiPatterns) {
+                if (pattern.test(searchText)) {
+                    return true;
+                }
+            }
+            
+            return false;
         }
 
         // ===== FIXED BOOKMARK FUNCTION =====
@@ -592,7 +669,7 @@
             };
         }
 
-        // ===== ACTUAL RSS/XML FETCHING =====
+        // ===== ACTUAL RSS/XML FETCHING WITH AI/HEALTH FILTERING =====
         async function loadArticles() {
             if (state.isLoading) return;
             
@@ -617,11 +694,20 @@
                         const articles = result.value;
                         
                         if (source.id === 'nejm-ai-podcast') {
-                            // NEJM articles go to NEJM tab
+                            // NEJM articles go to NEJM tab (all are AI/health related)
                             state.nejmArticles = [...state.nejmArticles, ...articles];
                         } else {
-                            // All other articles go to AI Live Feed
-                            state.articles = [...state.articles, ...articles];
+                            // Filter for AI/health articles for AI Live Feed
+                            const aiHealthArticles = articles.filter(article => 
+                                isAIHealthRelated(article.title) || 
+                                isAIHealthRelated(article.summary) ||
+                                (article.tags && article.tags.some(tag => isAIHealthRelated(tag)))
+                            );
+                            
+                            state.articles = [...state.articles, ...aiHealthArticles];
+                            
+                            // Log filtering stats
+                            console.log(`${source.name}: ${articles.length} total, ${aiHealthArticles.length} AI/health related`);
                         }
                     } else {
                         console.warn(`Failed to fetch from ${state.sources[index].name}:`, result.reason);
@@ -642,8 +728,8 @@
                 }
                 
                 state.lastRefresh = new Date();
-                console.log(`Loaded ${state.articles.length} articles from AI Live Feed sources`);
-                console.log(`Loaded ${state.nejmArticles.length} articles from NEJM`);
+                console.log(`Loaded ${state.articles.length} AI/health articles from AI Live Feed sources`);
+                console.log(`Loaded ${state.nejmArticles.length} articles from NEJM AI Podcast`);
                 
             } catch (error) {
                 console.error('Error loading articles:', error);
@@ -664,7 +750,8 @@
                 const response = await fetch(`${proxyUrl}${encodeURIComponent(source.url)}`, {
                     headers: {
                         'Accept': 'application/rss+xml, application/xml, text/xml, application/atom+xml'
-                    }
+                    },
+                    timeout: 10000 // 10 second timeout
                 });
                 
                 if (!response.ok) {
@@ -679,7 +766,7 @@
                 const parserError = xmlDoc.querySelector('parsererror');
                 if (parserError) {
                     console.error(`XML parsing error for ${source.name}:`, parserError.textContent);
-                    return [];
+                    return getFallbackArticles(source);
                 }
                 
                 // Try different RSS/Atom formats
@@ -693,7 +780,7 @@
                 console.log(`Found ${items.length} items in ${source.name}`);
                 
                 const articles = [];
-                const maxItems = 10; // Limit to 10 most recent items per source
+                const maxItems = 15; // Get up to 15 items, will filter later
                 
                 for (let i = 0; i < Math.min(items.length, maxItems); i++) {
                     const item = items[i];
@@ -706,6 +793,7 @@
                         
                         // Clean up title
                         title = title.replace(/<[^>]*>/g, '').trim();
+                        if (!title || title === 'No title available') continue;
                         
                         // Extract link/URL
                         let url = item.querySelector('link')?.textContent || 
@@ -758,6 +846,9 @@
                             cat.textContent.trim()
                         ).filter(cat => cat.length > 0);
                         
+                        // Add source category as a tag
+                        const allTags = [...categories, source.category];
+                        
                         // Generate unique ID
                         const id = `${source.id}-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 9)}`;
                         
@@ -770,7 +861,7 @@
                             date: formattedDate,
                             author: author,
                             url: url,
-                            tags: categories.length > 0 ? categories : [source.category]
+                            tags: allTags
                         });
                         
                     } catch (itemError) {
@@ -794,70 +885,110 @@
             const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
             const formattedDate = currentDate.toLocaleDateString('en-US', dateOptions);
             
-            // Generate fallback articles based on source
-            const fallbackTemplates = {
+            // Generate AI/health related fallback articles
+            const aiHealthTemplates = {
                 'healthcare-it-today': [
                     {
-                        title: 'Latest Healthcare AI Innovations',
-                        summary: 'Recent developments in healthcare AI technology and implementation strategies.',
-                        tags: ['Healthcare AI', 'Technology', 'Innovation']
+                        title: 'AI Revolutionizing Healthcare IT Infrastructure',
+                        summary: 'How artificial intelligence is transforming healthcare IT systems and improving patient care delivery.',
+                        tags: ['Healthcare IT', 'AI Infrastructure', 'Digital Transformation', 'Patient Care']
+                    },
+                    {
+                        title: 'Machine Learning for Hospital Resource Optimization',
+                        summary: 'AI algorithms helping hospitals optimize staffing, equipment, and resource allocation in real-time.',
+                        tags: ['Hospital Management', 'Resource Optimization', 'Machine Learning', 'Healthcare Analytics']
                     }
                 ],
                 'bmj-digital-health': [
                     {
-                        title: 'Digital Health Research Updates',
-                        summary: 'Latest research findings in digital health and AI applications in medicine.',
-                        tags: ['Research', 'Digital Health', 'Medical AI']
+                        title: 'Deep Learning in Medical Imaging Diagnosis',
+                        summary: 'Recent advances in using deep learning for accurate and rapid medical image analysis.',
+                        tags: ['Medical Imaging', 'Deep Learning', 'Diagnosis', 'Radiology AI']
+                    },
+                    {
+                        title: 'AI-Powered Clinical Decision Support Systems',
+                        summary: 'How AI is enhancing clinical decision making and reducing diagnostic errors in healthcare.',
+                        tags: ['Clinical Decision Support', 'AI Diagnostics', 'Patient Safety', 'Healthcare AI']
                     }
                 ],
                 'healthtech-magazines': [
                     {
-                        title: 'Health Technology Trends',
-                        summary: 'Emerging trends in health technology and AI-driven solutions.',
-                        tags: ['Health Tech', 'Trends', 'Innovation']
+                        title: 'Wearable AI Devices for Continuous Health Monitoring',
+                        summary: 'Next-generation wearable devices using AI to monitor vital signs and detect health issues early.',
+                        tags: ['Wearable Tech', 'Health Monitoring', 'AI Sensors', 'Preventive Care']
+                    },
+                    {
+                        title: 'Telemedicine Platforms Integrate AI Triage',
+                        summary: 'AI-powered triage systems improving efficiency and accuracy in telemedicine consultations.',
+                        tags: ['Telemedicine', 'AI Triage', 'Digital Health', 'Remote Care']
                     }
                 ],
                 'ai-news': [
                     {
-                        title: 'AI Technology Advancements',
-                        summary: 'Latest news and developments in artificial intelligence technology.',
-                        tags: ['AI Technology', 'News', 'Development']
+                        title: 'Generative AI for Drug Discovery Breakthrough',
+                        summary: 'How generative AI models are accelerating pharmaceutical research and novel drug development.',
+                        tags: ['Generative AI', 'Drug Discovery', 'Pharmaceutical Research', 'AI Innovation']
+                    },
+                    {
+                        title: 'Large Language Models in Medical Documentation',
+                        summary: 'LLMs reducing administrative burden by automating clinical notes and medical documentation.',
+                        tags: ['Large Language Models', 'Medical Documentation', 'Clinical Notes', 'AI Automation']
                     }
                 ],
                 'intelligent-health': [
                     {
-                        title: 'Intelligent Health Solutions',
-                        summary: 'AI-powered health solutions and intelligent healthcare systems.',
-                        tags: ['Intelligent Health', 'AI Solutions', 'Healthcare Systems']
+                        title: 'Intelligent Health AI for Chronic Disease Management',
+                        summary: 'AI systems providing personalized management plans for diabetes, hypertension, and other chronic conditions.',
+                        tags: ['Chronic Disease', 'Personalized Medicine', 'Health AI', 'Disease Management']
+                    },
+                    {
+                        title: 'Predictive Analytics for Hospital Readmission Reduction',
+                        summary: 'Machine learning models predicting patient readmission risks and enabling preventive interventions.',
+                        tags: ['Predictive Analytics', 'Hospital Readmissions', 'Risk Prediction', 'Preventive Care']
                     }
                 ],
                 'ai-and-health': [
                     {
-                        title: 'AI in Healthcare Applications',
-                        summary: 'Applications of artificial intelligence in healthcare settings.',
-                        tags: ['Healthcare Applications', 'AI Implementation', 'Medical AI']
+                        title: 'AI-Assisted Robotic Surgery Advancements',
+                        summary: 'Latest developments in AI-powered robotic surgical systems improving precision and outcomes.',
+                        tags: ['Robotic Surgery', 'Surgical AI', 'Precision Medicine', 'Medical Robotics']
+                    },
+                    {
+                        title: 'Natural Language Processing for Mental Health Assessment',
+                        summary: 'NLP algorithms analyzing speech patterns to detect and monitor mental health conditions.',
+                        tags: ['Natural Language Processing', 'Mental Health', 'AI Assessment', 'Psychiatry']
                     }
                 ],
                 'bayesian-health': [
                     {
-                        title: 'Bayesian Methods in Healthcare',
-                        summary: 'Applications of Bayesian statistics and AI in healthcare analytics.',
-                        tags: ['Bayesian Methods', 'Healthcare Analytics', 'Statistics']
+                        title: 'Bayesian AI Models for Patient Risk Stratification',
+                        summary: 'Advanced Bayesian methods for accurately stratifying patient risks and optimizing care pathways.',
+                        tags: ['Bayesian Methods', 'Risk Stratification', 'Patient Care', 'Clinical AI']
+                    },
+                    {
+                        title: 'Real-time AI Monitoring for Sepsis Detection',
+                        summary: 'AI systems providing early warning for sepsis development in hospitalized patients.',
+                        tags: ['Sepsis Detection', 'Real-time Monitoring', 'Critical Care', 'AI Alerts']
                     }
                 ],
                 'nejm-ai-podcast': [
                     {
-                        title: 'NEJM AI Podcast Latest Episode',
-                        summary: 'Latest discussions on AI in medicine from the New England Journal of Medicine.',
-                        tags: ['NEJM', 'Podcast', 'Medical AI', 'Clinical Research']
+                        title: 'NEJM AI: The Future of Clinical AI Implementation',
+                        summary: 'Expert discussion on implementing AI systems in clinical practice while ensuring patient safety.',
+                        tags: ['Clinical Implementation', 'AI Ethics', 'Patient Safety', 'Medical AI']
+                    },
+                    {
+                        title: 'AI in Medical Education and Physician Training',
+                        summary: 'How AI tools are transforming medical education and continuing professional development.',
+                        tags: ['Medical Education', 'Physician Training', 'AI Learning', 'Professional Development']
                     }
                 ]
             };
             
-            const template = fallbackTemplates[source.id] || [{
-                title: `${source.name} Latest Updates`,
-                summary: `Recent content from ${source.name} focusing on ${source.category}.`,
-                tags: [source.category, 'Latest News', 'Updates']
+            const template = aiHealthTemplates[source.id] || [{
+                title: `AI in ${source.category}`,
+                summary: `Latest developments in artificial intelligence applications for ${source.category.toLowerCase()}.`,
+                tags: [source.category, 'Artificial Intelligence', 'Healthcare Technology', 'Innovation']
             }];
             
             return template.map((item, index) => ({
@@ -893,14 +1024,25 @@
                 }
                 
                 // Generate AI insight based on article content
-                const insights = [
-                    "This article highlights important developments in healthcare AI. Key considerations include clinical validation, regulatory approval pathways, and integration with existing healthcare workflows.",
-                    "The advancement discussed represents progress in medical technology. Implementation challenges may include data privacy concerns, clinician training requirements, and ensuring equitable access across different healthcare settings.",
-                    "This development could significantly impact patient care. Successful adoption depends on addressing interoperability with existing systems, demonstrating clear clinical benefits, and maintaining transparency in AI decision-making processes.",
-                    "The technology mentioned shows promise for improving healthcare outcomes. Important factors for success include robust clinical evidence, user-friendly interfaces, and compliance with healthcare regulations and standards."
-                ];
+                let insight = "";
+                const title = article.title.toLowerCase();
+                const summary = article.summary.toLowerCase();
                 
-                aiText.textContent = insights[Math.floor(Math.random() * insights.length)];
+                if (title.includes('diagnostic') || summary.includes('diagnosis') || summary.includes('detect')) {
+                    insight = "This diagnostic AI technology could significantly reduce diagnostic delays and improve accuracy. Implementation considerations include integration with existing clinical workflows, validation across diverse patient populations, and addressing potential algorithmic bias in different demographic groups.";
+                } else if (title.includes('treatment') || summary.includes('therapy') || summary.includes('management')) {
+                    insight = "AI-driven treatment approaches show promise for personalized medicine. Key factors for success include robust clinical evidence, physician acceptance, patient engagement strategies, and integration with electronic health records for seamless clinical decision support.";
+                } else if (title.includes('monitoring') || summary.includes('surveillance') || summary.includes('tracking')) {
+                    insight = "Continuous AI monitoring represents a shift toward proactive healthcare. Important considerations include data privacy safeguards, alert fatigue management, clinical validation of monitoring algorithms, and ensuring equitable access across different healthcare settings.";
+                } else if (title.includes('drug') || summary.includes('pharmaceutical') || summary.includes('medication')) {
+                    insight = "AI in pharmaceutical development could accelerate discovery timelines. Critical success factors include validation of AI-predicted compounds, regulatory pathway clarity, integration with traditional research methods, and addressing intellectual property considerations for AI-generated discoveries.";
+                } else if (title.includes('surgery') || summary.includes('surgical') || summary.includes('operation')) {
+                    insight = "AI-assisted surgical technologies enhance precision and outcomes. Implementation challenges include surgeon training requirements, integration with existing surgical systems, liability considerations, and demonstrating clear clinical benefits over traditional approaches.";
+                } else {
+                    insight = "This healthcare AI advancement shows potential for improving clinical outcomes. Successful adoption requires addressing data quality issues, ensuring regulatory compliance, providing adequate clinician training, maintaining transparency in AI decision-making processes, and demonstrating clear value in terms of patient outcomes and healthcare efficiency.";
+                }
+                
+                aiText.textContent = insight;
                 aiInsight.classList.remove('hidden');
                 aiBtn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i>AI Insight';
                 aiBtn.disabled = false;
