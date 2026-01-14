@@ -191,18 +191,22 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-label">Navigation</div>
-                    <button class="nav-item active" data-view="feed">
-                        <div class="nav-item-content"><i class="fas fa-bolt"></i><span>AI Live Feed</span></div>
-                        <span class="unread-count" id="unread-count">0</span>
+                    <!-- NEW ORDER: 544 Analysis first -->
+                    <button class="nav-item" data-view="analysis">
+                        <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
                     </button>
+                    <!-- NEJM AI second -->
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
                     </button>
+                    <!-- Vault third -->
                     <button class="nav-item" data-view="vault">
                         <div class="nav-item-content"><i class="fas fa-vault"></i><span>Vault</span></div>
                     </button>
-                    <button class="nav-item" data-view="analysis">
-                        <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
+                    <!-- AI Live Feed last (but active by default) -->
+                    <button class="nav-item active" data-view="feed">
+                        <div class="nav-item-content"><i class="fas fa-bolt"></i><span>AI Live Feed</span></div>
+                        <span class="unread-count" id="unread-count">0</span>
                     </button>
                 </div>
                 
@@ -248,23 +252,25 @@
             </header>
 
             <div class="content-area custom-scrollbar">
-                <!-- AI LIVE FEED VIEW -->
-                <div id="feed-view" class="view-section active">
-                    <div class="feed-header">
-                        <div class="feed-title">
-                            <h2 id="feed-title">544 Health AI Tracker</h2>
-                            <p id="feed-subtitle">Monitoring specialized AI developments across Healthcare & Pharma.</p>
+                <!-- 544 ANALYSIS VIEW -->
+                <div id="analysis-view" class="view-section">
+                    <div class="analysis-view">
+                        <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">544 Analysis Hub</h2>
+                        <p style="color: var(--slate-500); margin-bottom: 2rem;">Upload and manage your curated analysis and feedback on selected topics.</p>
+                        
+                        <div class="upload-area" id="upload-trigger">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h3 style="margin-bottom: 0.5rem; color: var(--slate-800);">Upload Analysis Files</h3>
+                            <p style="color: var(--slate-600);">Drag & drop or click to upload PDF, DOC, or TXT files</p>
+                            <input type="file" id="file-upload" multiple style="display: none;" accept=".pdf,.doc,.docx,.txt">
                         </div>
-                    </div>
-                    <div id="loading-state" class="loading-state">
-                        <div class="spinner"></div>
-                        <p>Fetching latest AI insights from 8 sources...</p>
-                    </div>
-                    <div id="articles-grid" class="articles-grid hidden"></div>
-                    <div id="empty-state" class="empty-state hidden">
-                        <div class="empty-icon"><i class="fas fa-microchip"></i></div>
-                        <h3>No AI articles found</h3>
-                        <p>Try refreshing or checking your filter settings.</p>
+                        
+                        <div id="analysis-files-container">
+                            <h4 style="margin-bottom: 1rem; color: var(--slate-700);">Your Analysis Files</h4>
+                            <div id="analysis-files" class="analysis-files">
+                                <!-- Uploaded files will appear here -->
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -308,25 +314,23 @@
                     </div>
                 </div>
 
-                <!-- 544 ANALYSIS VIEW -->
-                <div id="analysis-view" class="view-section">
-                    <div class="analysis-view">
-                        <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">544 Analysis Hub</h2>
-                        <p style="color: var(--slate-500); margin-bottom: 2rem;">Upload and manage your curated analysis and feedback on selected topics.</p>
-                        
-                        <div class="upload-area" id="upload-trigger">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <h3 style="margin-bottom: 0.5rem; color: var(--slate-800);">Upload Analysis Files</h3>
-                            <p style="color: var(--slate-600);">Drag & drop or click to upload PDF, DOC, or TXT files</p>
-                            <input type="file" id="file-upload" multiple style="display: none;" accept=".pdf,.doc,.docx,.txt">
+                <!-- AI LIVE FEED VIEW -->
+                <div id="feed-view" class="view-section active">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2 id="feed-title">544 Health AI Tracker</h2>
+                            <p id="feed-subtitle">Monitoring specialized AI developments across Healthcare & Pharma.</p>
                         </div>
-                        
-                        <div id="analysis-files-container">
-                            <h4 style="margin-bottom: 1rem; color: var(--slate-700);">Your Analysis Files</h4>
-                            <div id="analysis-files" class="analysis-files">
-                                <!-- Uploaded files will appear here -->
-                            </div>
-                        </div>
+                    </div>
+                    <div id="loading-state" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Fetching latest AI insights from 8 sources...</p>
+                    </div>
+                    <div id="articles-grid" class="articles-grid hidden"></div>
+                    <div id="empty-state" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-microchip"></i></div>
+                        <h3>No AI articles found</h3>
+                        <p>Try refreshing or checking your filter settings.</p>
                     </div>
                 </div>
             </div>
@@ -489,6 +493,8 @@
                     renderNEJMArticles();
                 } else if (view === 'feed') {
                     renderArticles();
+                } else if (view === 'analysis') {
+                    // Analysis view doesn't need article rendering
                 }
             }));
 
