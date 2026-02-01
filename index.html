@@ -159,9 +159,6 @@
         .analysis-file { background: white; border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 1rem; display: flex; align-items: center; gap: 0.75rem; }
         .analysis-file i { color: var(--primary-500); font-size: 1.25rem; }
         
-        .vault-delete-btn { background: none; border: none; color: #ef4444; cursor: pointer; padding: 0.5rem; border-radius: var(--radius); transition: all 0.2s; }
-        .vault-delete-btn:hover { background-color: rgba(239, 68, 68, 0.1); }
-        
         @media (max-width: 768px) { 
             .app-container { flex-direction: column; } 
             .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--slate-200); } 
@@ -198,10 +195,6 @@
                     <!-- NEJM AI second -->
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
-                    </button>
-                    <!-- Vault third -->
-                    <button class="nav-item" data-view="vault">
-                        <div class="nav-item-content"><i class="fas fa-vault"></i><span>Vault</span></div>
                     </button>
                     <!-- AI Live Feed last (but active by default) -->
                     <button class="nav-item active" data-view="feed">
@@ -294,26 +287,6 @@
                     </div>
                 </div>
 
-                <!-- VAULT VIEW -->
-                <div id="vault-view" class="view-section">
-                    <div class="feed-header">
-                        <div class="feed-title">
-                            <h2>Vault</h2>
-                            <p>Your saved articles and research. Click the trash icon to remove items.</p>
-                        </div>
-                    </div>
-                    <div id="vault-loading" class="loading-state">
-                        <div class="spinner"></div>
-                        <p>Loading your saved articles...</p>
-                    </div>
-                    <div id="vault-grid" class="articles-grid hidden"></div>
-                    <div id="vault-empty" class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-vault"></i></div>
-                        <h3>Your Vault is empty</h3>
-                        <p>Bookmark articles by clicking the bookmark icon on any article.</p>
-                    </div>
-                </div>
-
                 <!-- AI LIVE FEED VIEW -->
                 <div id="feed-view" class="view-section active">
                     <div class="feed-header">
@@ -363,37 +336,6 @@
         </div>
     </template>
 
-    <template id="vault-article-template">
-        <div class="article-card" data-id="">
-            <div class="article-body">
-                <div class="article-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <span class="article-source"></span>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="bookmark-btn active"><i class="fas fa-bookmark"></i></button>
-                        <button class="vault-delete-btn" title="Remove from Vault">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                <h3 class="article-title"><a href="#" target="_blank" rel="noopener noreferrer"></a></h3>
-                <div class="article-meta">
-                    <span class="article-date"><i class="far fa-calendar"></i><span class="date-text"></span></span>
-                    <span class="article-author"><i class="far fa-user"></i><span class="author-text"></span></span>
-                </div>
-                <p class="article-summary"></p>
-                <div class="ai-insight hidden">
-                    <div class="ai-header"><i class="fas fa-sparkles"></i>AI Insight</div>
-                    <p class="ai-text"></p>
-                </div>
-                <div class="article-tags"></div>
-            </div>
-            <div class="article-footer">
-                <button class="ai-insight-btn"><i class="fas fa-wand-magic-sparkles"></i>Get AI Insight</button>
-                <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">Read Full<i class="fas fa-external-link-alt"></i></a>
-            </div>
-        </div>
-    </template>
-
     <script>
         // ===== CONSTANTS =====
         const DEFAULT_SOURCES = [
@@ -407,7 +349,7 @@
             { id: 'bayesian-health', name: 'Bayesian Health', url: 'https://www.bayesianhealth.com/feed/', homepage: 'https://www.bayesianhealth.com/', category: 'Clinical AI', enabled: true }
         ];
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
-        const CORS_PROXY = 'https://corsproxy.io/?';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';  // CORRECTED CORS PROXY
 
         // ===== STATE =====
         let state = {
@@ -418,7 +360,6 @@
             // INDEPENDENT FILTER STATES FOR EACH TAB
             feedFilters: { search: '', source: 'all', date: 'newest' },
             nejmFilters: { search: '', date: 'newest' },
-            vaultFilters: { search: '', date: 'newest' },
             config: { refreshInterval: 60, sources: DEFAULT_SOURCES },
             bookmarks: new Set(),
             analysisFiles: []
@@ -487,14 +428,10 @@
                 }
                 
                 // Update UI based on view
-                if (view === 'vault') {
-                    renderVault();
-                } else if (view === 'nejm') {
+                if (view === 'nejm') {
                     renderNEJMArticles();
                 } else if (view === 'feed') {
                     renderArticles();
-                } else if (view === 'analysis') {
-                    // Analysis view doesn't need article rendering
                 }
             }));
 
@@ -508,9 +445,6 @@
                 } else if (state.currentView === 'nejm') {
                     state.nejmFilters.search = searchValue;
                     renderNEJMArticles();
-                } else if (state.currentView === 'vault') {
-                    state.vaultFilters.search = searchValue;
-                    renderVault();
                 }
             });
 
@@ -529,9 +463,6 @@
                 } else if (state.currentView === 'nejm') {
                     state.nejmFilters.date = dateValue;
                     renderNEJMArticles();
-                } else if (state.currentView === 'vault') {
-                    state.vaultFilters.date = dateValue;
-                    renderVault();
                 }
             });
         }
@@ -857,155 +788,6 @@
             renderArticleList(displayArticles, grid, false);
         }
 
-        // ===== CODE B: FIXED RENDERVAULT FUNCTION =====
-        function renderVault() {
-            const grid = document.getElementById('vault-grid');
-            const loading = document.getElementById('vault-loading');
-            const empty = document.getElementById('vault-empty');
-            
-            loading.classList.add('hidden');
-            
-            // Get ALL articles from both feeds that are ACTUALLY bookmarked
-            let vaultArticles = [];
-            
-            // Check real articles from feed
-            state.articles.forEach(article => {
-                if (state.bookmarks.has(article.id)) {
-                    vaultArticles.push(article);
-                }
-            });
-            
-            // Check NEJM articles
-            state.nejmArticles.forEach(article => {
-                if (state.bookmarks.has(article.id)) {
-                    vaultArticles.push(article);
-                }
-            });
-            
-            // Apply filters
-            const filters = state.vaultFilters;
-            if (filters.search) {
-                vaultArticles = vaultArticles.filter(article => 
-                    article.title.toLowerCase().includes(filters.search) || 
-                    article.summary.toLowerCase().includes(filters.search)
-                );
-            }
-            
-            // Apply date filter
-            vaultArticles = applyDateFilter(vaultArticles, filters.date);
-            
-            if (vaultArticles.length === 0) {
-                grid.classList.add('hidden');
-                empty.classList.remove('hidden');
-                return;
-            }
-            
-            empty.classList.add('hidden');
-            grid.classList.remove('hidden');
-            grid.innerHTML = '';
-            
-            // ... rest of the function remains the same
-            // Use special vault template with delete button
-            vaultArticles.forEach(article => {
-                const template = document.getElementById('vault-article-template');
-                const clone = template.content.cloneNode(true);
-                const articleEl = clone.querySelector('.article-card');
-                
-                articleEl.dataset.id = article.id;
-                articleEl.querySelector('.article-source').textContent = article.sourceName;
-                
-                // Set up bookmark button (already active in vault)
-                const bookmarkBtn = articleEl.querySelector('.bookmark-btn');
-                bookmarkBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    removeFromVault(article.id, articleEl);
-                });
-                
-                // Set up delete button
-                const deleteBtn = articleEl.querySelector('.vault-delete-btn');
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    removeFromVault(article.id, articleEl);
-                });
-                
-                const titleLink = articleEl.querySelector('.article-title a');
-                titleLink.textContent = article.title;
-                titleLink.href = article.link;
-                
-                articleEl.querySelector('.date-text').textContent = new Date(article.pubDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-                
-                articleEl.querySelector('.author-text').textContent = article.author;
-                articleEl.querySelector('.article-summary').textContent = article.summary;
-                
-                const readFullBtn = articleEl.querySelector('.read-full-btn');
-                readFullBtn.href = article.link;
-                
-                const tagsContainer = articleEl.querySelector('.article-tags');
-                article.categories.slice(0, 3).forEach(cat => {
-                    const tag = document.createElement('span');
-                    tag.textContent = cat;
-                    tagsContainer.appendChild(tag);
-                });
-                
-                const aiBtn = articleEl.querySelector('.ai-insight-btn');
-                aiBtn.addEventListener('click', function() {
-                    const insightEl = articleEl.querySelector('.ai-insight');
-                    if (!insightEl.classList.contains('hidden')) return;
-                    
-                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
-                    this.disabled = true;
-                    
-                    setTimeout(() => {
-                        insightEl.classList.remove('hidden');
-                        insightEl.querySelector('.ai-text').textContent = 
-                            "AI analysis: This article discusses developments in healthcare AI with potential implications for clinical practice and patient outcomes.";
-                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
-                        this.disabled = true;
-                    }, 1500);
-                });
-                
-                grid.appendChild(articleEl);
-            });
-        }
-
-        function removeFromVault(articleId, articleEl) {
-            // Remove from bookmarks
-            state.bookmarks.delete(articleId);
-            
-            // Update articles in state
-            state.articles = state.articles.map(article => 
-                article.id === articleId ? { ...article, bookmarked: false } : article
-            );
-            
-            state.nejmArticles = state.nejmArticles.map(article => 
-                article.id === articleId ? { ...article, bookmarked: false } : article
-            );
-            
-            // Remove from UI
-            if (articleEl) {
-                articleEl.remove();
-            }
-            
-            // Check if vault is now empty
-            const vaultGrid = document.getElementById('vault-grid');
-            const vaultEmpty = document.getElementById('vault-empty');
-            
-            if (vaultGrid.children.length === 0) {
-                vaultGrid.classList.add('hidden');
-                vaultEmpty.classList.remove('hidden');
-            }
-            
-            // Update unread count in sidebar
-            const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
-            document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
-            
-            saveState();
-        }
-
         function renderArticleList(articles, container, isVault = false) {
             articles.forEach(article => {
                 const template = document.getElementById('article-template');
@@ -1070,7 +852,6 @@
             });
         }
 
-        // ===== CODE B: FIXED TOGGLEBOOKMARK FUNCTION =====
         function toggleBookmark(articleId, bookmarkBtn) {
             const wasBookmarked = state.bookmarks.has(articleId);
             
@@ -1079,22 +860,11 @@
                 state.bookmarks.delete(articleId);
                 bookmarkBtn.classList.remove('active');
                 bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
-                
-                // Also remove from Vault display if we're in Vault view
-                if (state.currentView === 'vault') {
-                    const articleEl = document.querySelector(`#vault-grid .article-card[data-id="${articleId}"]`);
-                    if (articleEl) {
-                        articleEl.remove();
-                    }
-                }
             } else {
                 // ADD to bookmarks
                 state.bookmarks.add(articleId);
                 bookmarkBtn.classList.add('active');
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
-                
-                // DO NOT automatically add to any storage array
-                // The Vault will display based on state.bookmarks only
             }
             
             // Update articles in state
@@ -1111,11 +881,6 @@
             document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
             
             saveState();
-            
-            // Refresh Vault view if we're in it
-            if (state.currentView === 'vault') {
-                renderVault();
-            }
         }
 
         function renderSidebar() {
@@ -1128,8 +893,6 @@
                 document.getElementById('date-filter').value = state.feedFilters.date;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('date-filter').value = state.nejmFilters.date;
-            } else if (state.currentView === 'vault') {
-                document.getElementById('date-filter').value = state.vaultFilters.date;
             }
             
             // Set search input to current view's value
@@ -1137,8 +900,6 @@
                 document.getElementById('search-input').value = state.feedFilters.search;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('search-input').value = state.nejmFilters.search;
-            } else if (state.currentView === 'vault') {
-                document.getElementById('search-input').value = state.vaultFilters.search;
             }
             
             // Show/hide Focus Area based on current view
