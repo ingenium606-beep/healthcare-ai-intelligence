@@ -133,12 +133,7 @@
         .article-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: auto; }
         .article-tags span { font-size: 0.625rem; background-color: var(--slate-100); color: var(--slate-500); padding: 0.25rem 0.5rem; border-radius: 9999px; }
         .article-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--slate-100); background-color: var(--slate-50); display: flex; gap: 0.75rem; }
-        .ai-insight-btn, .read-full-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-        .ai-insight-btn { background-color: white; border: 1px solid var(--indigo-200); color: var(--indigo-600); }
-        .ai-insight-btn:hover { background-color: var(--indigo-50); }
-        .ai-insight-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .ai-insight-btn i.fa-spin { animation: spin 1s linear infinite; }
-        .read-full-btn { background-color: var(--primary-600); color: white; border: none; box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1); }
+        .read-full-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; background-color: var(--primary-600); color: white; border: none; box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1); }
         .read-full-btn:hover { background-color: var(--primary-700); }
         
         .empty-state { text-align: center; padding: 6rem 2rem; background-color: white; border-radius: 1.5rem; border: 2px dashed var(--slate-200); max-width: 48rem; margin: 0 auto; }
@@ -322,7 +317,6 @@
                 <div class="article-tags"></div>
             </div>
             <div class="article-footer">
-                <button class="ai-insight-btn"><i class="fas fa-wand-magic-sparkles"></i>Get AI Insight</button>
                 <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">Read Full<i class="fas fa-external-link-alt"></i></a>
             </div>
         </div>
@@ -342,7 +336,6 @@
         ];
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
         
-        // FIXED: Changed from /raw?url= to /get?url= for proper response format
         const CORS_PROXY = 'https://api.allorigins.win/get?url=';
 
         // ===== STATE =====
@@ -519,7 +512,6 @@
             });
         }
 
-        // FIXED: Complete rewrite of fetchFeed function to properly handle RSS feeds
         async function fetchFeed(source) {
             try {
                 const encodedUrl = encodeURIComponent(source.url);
@@ -538,29 +530,23 @@
                 const parseError = xmlDoc.querySelector('parsererror');
                 if (parseError) throw new Error('Failed to parse XML');
                 
-                // Try multiple feed formats
                 let items = [];
                 
-                // Try standard RSS items
                 if (xmlDoc.querySelectorAll('item').length > 0) {
                     items = xmlDoc.querySelectorAll('item');
                 } 
-                // Try Atom entries
                 else if (xmlDoc.querySelectorAll('entry').length > 0) {
                     items = xmlDoc.querySelectorAll('entry');
                 }
-                // Try RSS with namespace
                 else if (xmlDoc.querySelectorAll('rss item').length > 0) {
                     items = xmlDoc.querySelectorAll('rss item');
                 }
-                // Fallback - if no items found, return empty array (will trigger sample data)
                 else {
                     console.log(`No items found for ${source.name}`);
                     return [];
                 }
                 
                 return Array.from(items).map(item => {
-                    // Helper function to get text content
                     const getText = (selector) => {
                         const element = item.querySelector(selector);
                         return element?.textContent || element?.getAttribute('term') || '';
@@ -568,7 +554,6 @@
                     
                     const title = getText('title') || 'Untitled';
                     
-                    // Get link - try different formats
                     let link = '';
                     const linkElem = item.querySelector('link');
                     if (linkElem) {
@@ -581,13 +566,11 @@
                     
                     const pubDate = getText('pubDate') || getText('published') || getText('updated') || new Date().toISOString();
                     
-                    // Get description/summary
                     let summary = getText('description') || getText('summary') || getText('content') || '';
                     summary = summary.replace(/<[^>]*>/g, '').slice(0, 250).trim();
                     
                     const author = getText('author') || getText('creator') || source.name;
                     
-                    // Get categories
                     const categories = [];
                     item.querySelectorAll('category, topic, tag').forEach(cat => {
                         const catText = cat.textContent || cat.getAttribute('term') || cat.getAttribute('label');
@@ -644,7 +627,6 @@
                     }
                 });
                 
-                // YOUR ORIGINAL AI FILTER - UNCHANGED
                 const aiFiltered = flatItems.filter(item => {
                     const content = (item.title + ' ' + item.summary).toLowerCase();
                     return AI_KEYWORDS.some(keyword => 
@@ -672,7 +654,6 @@
                     bookmarked: state.bookmarks.has(item.id)
                 }));
                 
-                // If no articles found from any source, provide sample data so UI isn't empty
                 if (state.articles.length === 0 && state.nejmArticles.length === 0) {
                     console.log('No articles found from any source, providing sample data');
                     provideSampleData();
@@ -690,7 +671,6 @@
             saveState();
         }
         
-        // Helper function to provide sample data when feeds fail
         function provideSampleData() {
             state.articles = DEFAULT_SOURCES
                 .filter(s => s.enabled && s.id !== 'nejm-ai-podcast')
@@ -860,23 +840,6 @@
                     const tag = document.createElement('span');
                     tag.textContent = cat;
                     tagsContainer.appendChild(tag);
-                });
-                
-                const aiBtn = articleEl.querySelector('.ai-insight-btn');
-                aiBtn.addEventListener('click', function() {
-                    const insightEl = articleEl.querySelector('.ai-insight');
-                    if (!insightEl.classList.contains('hidden')) return;
-                    
-                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
-                    this.disabled = true;
-                    
-                    setTimeout(() => {
-                        insightEl.classList.remove('hidden');
-                        insightEl.querySelector('.ai-text').textContent = 
-                            "AI analysis: This article discusses developments in healthcare AI with potential implications for clinical practice and patient outcomes.";
-                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
-                        this.disabled = true;
-                    }, 1500);
                 });
                 
                 container.appendChild(articleEl);
