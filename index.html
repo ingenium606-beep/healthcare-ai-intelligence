@@ -134,7 +134,7 @@
         .article-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: auto; }
         .article-tags span { font-size: 0.625rem; background-color: var(--slate-100); color: var(--slate-500); padding: 0.25rem 0.5rem; border-radius: 9999px; }
         .article-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--slate-100); background-color: var(--slate-50); display: flex; gap: 0.75rem; }
-        /* REMOVED: ai-insight-btn styles - but keeping the original read-full-btn styles exactly as they were */
+        /* REMOVED: .ai-insight-btn styles - they are no longer needed */
         .read-full-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; background-color: var(--primary-600); color: white; border: none; box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1); }
         .read-full-btn:hover { background-color: var(--primary-700); }
         
@@ -146,8 +146,8 @@
         
         .analysis-view { padding: 2rem; max-width: 80rem; margin: 0 auto; }
         
-        /* NEW STYLES FOR ANALYSIS HUB DESTINATION FIELD - ADDED WITH YOUR PERMISSION */
-        .webhook-section {
+        /* NEW: Destination field styles - ADDED WITH YOUR PERMISSION */
+        .destination-section {
             background: white;
             border: 1px solid var(--slate-200);
             border-radius: var(--radius-xl);
@@ -155,14 +155,14 @@
             margin-bottom: 2rem;
         }
         
-        .webhook-header {
+        .destination-header {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
         
-        .webhook-header i {
+        .destination-header i {
             font-size: 1.5rem;
             color: var(--primary-600);
             background: var(--primary-50);
@@ -170,43 +170,41 @@
             border-radius: var(--radius);
         }
         
-        .webhook-header h3 {
+        .destination-header h3 {
             font-size: 1.125rem;
             font-weight: 600;
             color: var(--slate-800);
         }
         
-        .webhook-header p {
+        .destination-header p {
             color: var(--slate-500);
             font-size: 0.875rem;
             margin-top: 0.25rem;
         }
         
-        .webhook-url-container {
+        .destination-url-container {
             display: flex;
             gap: 0.5rem;
             margin: 1rem 0;
+            background: var(--slate-50);
+            padding: 0.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--slate-200);
         }
         
-        .webhook-url {
+        .destination-url {
             flex: 1;
             padding: 0.75rem 1rem;
-            background: var(--slate-50);
+            background: white;
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            font-family: 'Monaco', 'Menlo', monospace;
+            border-radius: var(--radius);
+            font-family: monospace;
             font-size: 0.875rem;
             color: var(--slate-700);
             cursor: pointer;
-            transition: all 0.2s;
         }
         
-        .webhook-url:hover {
-            background: var(--slate-100);
-            border-color: var(--primary-300);
-        }
-        
-        .webhook-copy-btn {
+        .destination-copy-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -214,123 +212,34 @@
             background: var(--primary-600);
             color: white;
             border: none;
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius);
             font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
         
-        .webhook-copy-btn:hover {
+        .destination-copy-btn:hover {
             background: var(--primary-700);
         }
         
-        .webhook-copy-btn.copied {
+        .destination-copy-btn.copied {
             background: var(--amber-500);
         }
         
-        .webhook-instructions {
+        .destination-instructions {
             background: var(--slate-50);
             border-radius: var(--radius-lg);
             padding: 1rem;
             margin-top: 1rem;
-        }
-        
-        .webhook-instructions h4 {
             font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--slate-700);
-            margin-bottom: 0.5rem;
+            color: var(--slate-600);
         }
         
-        .webhook-instructions pre {
-            background: var(--slate-800);
-            color: var(--slate-100);
-            padding: 1rem;
-            border-radius: var(--radius);
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.75rem;
-            overflow-x: auto;
-            margin: 0.5rem 0;
-        }
-        
-        .webhook-instructions code {
+        .destination-instructions code {
             background: var(--slate-200);
-            color: var(--slate-800);
             padding: 0.2rem 0.4rem;
             border-radius: var(--radius-sm);
             font-size: 0.75rem;
-        }
-        
-        .incoming-data-section {
-            background: white;
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .incoming-data-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        
-        .incoming-data-header h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--slate-800);
-        }
-        
-        .incoming-data-badge {
-            background: var(--primary-100);
-            color: var(--primary-700);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        
-        .incoming-data-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-        
-        .incoming-data-item {
-            background: var(--slate-50);
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-        }
-        
-        .incoming-data-item:hover {
-            background: var(--slate-100);
-        }
-        
-        .incoming-data-title {
-            font-weight: 600;
-            color: var(--slate-800);
-            margin-bottom: 0.25rem;
-        }
-        
-        .incoming-data-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.75rem;
-            color: var(--slate-500);
-            margin-bottom: 0.5rem;
-        }
-        
-        .incoming-data-content {
-            font-size: 0.875rem;
-            color: var(--slate-600);
-            padding: 0.5rem;
-            background: white;
-            border-radius: var(--radius);
-            max-height: 100px;
-            overflow-y: auto;
         }
         
         .upload-area { 
@@ -372,22 +281,18 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-label">Navigation</div>
-                    <!-- NEW ORDER: 544 Analysis first -->
                     <button class="nav-item" data-view="analysis">
                         <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
                     </button>
-                    <!-- NEJM AI second -->
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
                     </button>
-                    <!-- AI Live Feed last (but active by default) -->
                     <button class="nav-item active" data-view="feed">
                         <div class="nav-item-content"><i class="fas fa-bolt"></i><span>AI Live Feed</span></div>
                         <span class="unread-count" id="unread-count">0</span>
                     </button>
                 </div>
                 
-                <!-- FOCUS AREA SECTION - Only visible in AI Live Feed -->
                 <div class="nav-section focus-area" id="focus-area-section">
                     <div class="nav-label">Focus Areas</div>
                     <div class="date-filter-container">
@@ -433,51 +338,28 @@
                 <div id="analysis-view" class="view-section">
                     <div class="analysis-view">
                         <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">544 Analysis Hub</h2>
-                        <p style="color: var(--slate-500); margin-bottom: 2rem;">Upload and manage your curated analysis and receive data from external sources.</p>
+                        <p style="color: var(--slate-500); margin-bottom: 2rem;">Upload and manage your curated analysis and feedback on selected topics.</p>
                         
-                        <!-- NEW: Webhook/Destination Field -->
-                        <div class="webhook-section">
-                            <div class="webhook-header">
-                                <i class="fas fa-plug"></i>
+                        <!-- NEW: Destination field added here -->
+                        <div class="destination-section">
+                            <div class="destination-header">
+                                <i class="fas fa-arrow-right-to-bracket"></i>
                                 <div>
-                                    <h3>Incoming Data Destination</h3>
-                                    <p>Send data to this URL to automatically add it to your Analysis Hub</p>
+                                    <h3>Data Destination URL</h3>
+                                    <p>Send data to this URL to post directly to your Analysis Hub</p>
                                 </div>
                             </div>
                             
-                            <div class="webhook-url-container">
-                                <input type="text" id="webhook-url" class="webhook-url" value="[YOUR-DOMAIN-HERE]/api/analysis/incoming" readonly onclick="this.select()">
-                                <button id="copy-webhook-btn" class="webhook-copy-btn">
-                                    <i class="far fa-copy"></i> Copy URL
+                            <div class="destination-url-container">
+                                <input type="text" id="destination-url" class="destination-url" value="https://your-domain.com/api/544-analysis" readonly onclick="this.select()">
+                                <button id="copy-url-btn" class="destination-copy-btn">
+                                    <i class="far fa-copy"></i> Copy
                                 </button>
                             </div>
                             
-                            <div class="webhook-instructions">
-                                <h4>How to send data:</h4>
-                                <p>Send a POST request with JSON data to the URL above. Example:</p>
-                                <pre>curl -X POST [YOUR-DOMAIN-HERE]/api/analysis/incoming \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Your Analysis Title",
-    "content": "Your analysis content here...",
-    "source": "External API",
-    "tags": ["AI", "Healthcare", "Clinical"]
-  }'</pre>
-                                <p><strong>Supported fields:</strong> <code>title</code>, <code>content</code>, <code>source</code>, <code>tags</code> (array), <code>author</code>, <code>date</code></p>
-                                <p><em>Note: Replace [YOUR-DOMAIN-HERE] with your actual domain where this app is hosted.</em></p>
-                            </div>
-                        </div>
-                        
-                        <!-- NEW: Display incoming data -->
-                        <div class="incoming-data-section" id="incoming-data-section">
-                            <div class="incoming-data-header">
-                                <h4>Received Data <span id="incoming-count" class="incoming-data-badge">0 items</span></h4>
-                                <button id="clear-incoming-btn" class="refresh-btn" style="padding: 0.25rem 0.75rem;">
-                                    <i class="fas fa-trash-alt"></i> Clear All
-                                </button>
-                            </div>
-                            <div id="incoming-data-list" class="incoming-data-list">
-                                <!-- Incoming data will appear here -->
+                            <div class="destination-instructions">
+                                <strong>How to use:</strong> Send a POST request with JSON data to this URL.<br>
+                                <code>curl -X POST https://your-domain.com/api/544-analysis -H "Content-Type: application/json" -d '{"title":"Example","content":"Your analysis"}'</code>
                             </div>
                         </div>
                         
@@ -485,4 +367,693 @@
                             <i class="fas fa-cloud-upload-alt"></i>
                             <h3 style="margin-bottom: 0.5rem; color: var(--slate-800);">Upload Analysis Files</h3>
                             <p style="color: var(--slate-600);">Drag & drop or click to upload PDF, DOC, or TXT files</p>
-                            <input type="file" id="file-upload" multiple style="display
+                            <input type="file" id="file-upload" multiple style="display: none;" accept=".pdf,.doc,.docx,.txt">
+                        </div>
+                        
+                        <div id="analysis-files-container">
+                            <h4 style="margin-bottom: 1rem; color: var(--slate-700);">Your Analysis Files</h4>
+                            <div id="analysis-files" class="analysis-files">
+                                <!-- Uploaded files will appear here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEJM AI VIEW -->
+                <div id="nejm-view" class="view-section">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2>NEJM AI Insights</h2>
+                            <p>Curated AI research and discussions from the New England Journal of Medicine.</p>
+                        </div>
+                    </div>
+                    <div id="nejm-loading" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading NEJM AI content...</p>
+                    </div>
+                    <div id="nejm-grid" class="articles-grid hidden"></div>
+                    <div id="nejm-empty" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-podcast"></i></div>
+                        <h3>No NEJM AI content</h3>
+                        <p>Check back later for new AI research updates.</p>
+                    </div>
+                </div>
+
+                <!-- AI LIVE FEED VIEW -->
+                <div id="feed-view" class="view-section active">
+                    <div class="feed-header">
+                        <div class="feed-title">
+                            <h2 id="feed-title">544 Health AI Tracker</h2>
+                            <p id="feed-subtitle">Monitoring specialized AI developments across Healthcare & Pharma.</p>
+                        </div>
+                    </div>
+                    <div id="loading-state" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Fetching latest AI insights from 8 sources...</p>
+                    </div>
+                    <div id="articles-grid" class="articles-grid hidden"></div>
+                    <div id="empty-state" class="empty-state hidden">
+                        <div class="empty-icon"><i class="fas fa-microchip"></i></div>
+                        <h3>No AI articles found</h3>
+                        <p>Try refreshing or checking your filter settings.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <template id="article-template">
+        <div class="article-card">
+            <div class="article-body">
+                <div class="article-header">
+                    <span class="article-source"></span>
+                    <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                </div>
+                <h3 class="article-title"><a href="#" target="_blank" rel="noopener noreferrer"></a></h3>
+                <div class="article-meta">
+                    <span class="article-date"><i class="far fa-calendar"></i><span class="date-text"></span></span>
+                    <span class="article-author"><i class="far fa-user"></i><span class="author-text"></span></span>
+                </div>
+                <p class="article-summary"></p>
+                <div class="ai-insight hidden">
+                    <div class="ai-header"><i class="fas fa-sparkles"></i>AI Insight</div>
+                    <p class="ai-text"></p>
+                </div>
+                <div class="article-tags"></div>
+            </div>
+            <div class="article-footer">
+                <!-- REMOVED: Get AI Insight button - only Read Full remains -->
+                <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">Read Full<i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // ===== CONSTANTS =====
+        const DEFAULT_SOURCES = [
+            { id: 'healthcare-it-today', name: 'Healthcare IT Today', url: 'https://www.healthcareittoday.com/feed/', homepage: 'https://www.healthcareittoday.com/', category: 'Health IT & AI', enabled: true },
+            { id: 'nejm-ai-podcast', name: 'NEJM AI Podcast', url: 'https://ai-podcast.nejm.org/feed.xml', homepage: 'https://ai-podcast.nejm.org/', category: 'Clinical AI', enabled: true },
+            { id: 'bmj-digital-health', name: 'BMJ Digital Health', url: 'https://bmjdigitalhealth.bmj.com/rss/current.xml', homepage: 'https://bmjdigitalhealth.bmj.com/', category: 'Medical AI', enabled: true },
+            { id: 'healthtech-magazines', name: 'Healthtech Magazines', url: 'https://www.healthtechmagazines.com/feed/', homepage: 'https://www.healthtechmagazines.com/', category: 'Health Tech', enabled: true },
+            { id: 'ai-news', name: 'Artificial Intelligence News', url: 'https://www.artificialintelligence-news.com/feed/', homepage: 'https://www.artificialintelligence-news.com/', category: 'General AI', enabled: true },
+            { id: 'intelligent-health', name: 'Intelligent Health AI', url: 'https://blog.intelligenthealth.ai/rss.xml', homepage: 'https://blog.intelligenthealth.ai/', category: 'Health AI', enabled: true },
+            { id: 'ai-and-health', name: 'AI and Health', url: 'https://www.aiandhealth.com/blog-feed.xml', homepage: 'https://www.aiandhealth.com/', category: 'Health AI', enabled: true },
+            { id: 'bayesian-health', name: 'Bayesian Health', url: 'https://www.bayesianhealth.com/feed/', homepage: 'https://www.bayesianhealth.com/', category: 'Clinical AI', enabled: true }
+        ];
+        const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+        // ===== STATE =====
+        let state = {
+            currentView: 'feed',
+            articles: [],
+            nejmArticles: [],
+            loading: true,
+            feedFilters: { search: '', source: 'all', date: 'newest' },
+            nejmFilters: { search: '', date: 'newest' },
+            config: { refreshInterval: 60, sources: DEFAULT_SOURCES },
+            bookmarks: new Set(),
+            analysisFiles: []
+        };
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            setupEvents();
+            renderSidebar();
+            fetchAndDisplayArticles();
+            setupFileUpload();
+            setupDestinationField(); // NEW: Setup the destination field copy button
+        });
+
+        // ===== FUNCTIONS =====
+        function loadState() {
+            try {
+                const savedConfig = localStorage.getItem('544_health_ai_config');
+                if (savedConfig) {
+                    const parsed = JSON.parse(savedConfig);
+                    state.config.sources = DEFAULT_SOURCES.map(defaultSource => {
+                        const savedSource = parsed.sources?.find(s => s.id === defaultSource.id);
+                        return savedSource ? { ...defaultSource, enabled: savedSource.enabled } : defaultSource;
+                    });
+                }
+                const savedBookmarks = localStorage.getItem('544_health_ai_bookmarks');
+                if (savedBookmarks) state.bookmarks = new Set(JSON.parse(savedBookmarks));
+                
+                const savedAnalysis = localStorage.getItem('544_analysis');
+                if (savedAnalysis) state.analysisFiles = JSON.parse(savedAnalysis);
+                
+                updateAnalysisDisplay();
+            } catch (e) { console.error('Load error:', e); }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('544_health_ai_config', JSON.stringify(state.config));
+                localStorage.setItem('544_health_ai_bookmarks', JSON.stringify([...state.bookmarks]));
+                localStorage.setItem('544_analysis', JSON.stringify(state.analysisFiles));
+            } catch (e) { console.error('Save error:', e); }
+        }
+
+        // NEW: Setup destination field copy button
+        function setupDestinationField() {
+            const copyBtn = document.getElementById('copy-url-btn');
+            const urlInput = document.getElementById('destination-url');
+            
+            copyBtn.addEventListener('click', () => {
+                urlInput.select();
+                document.execCommand('copy');
+                
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                copyBtn.classList.add('copied');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        function setupEvents() {
+            // View navigation
+            document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const view = this.dataset.view;
+                state.currentView = view;
+                
+                document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
+                document.getElementById(`${view}-view`).classList.add('active');
+                
+                document.getElementById('search-input').value = '';
+                
+                const focusArea = document.getElementById('focus-area-section');
+                if (view === 'feed') {
+                    focusArea.classList.remove('hidden');
+                } else {
+                    focusArea.classList.add('hidden');
+                }
+                
+                if (view === 'nejm') {
+                    renderNEJMArticles();
+                } else if (view === 'feed') {
+                    renderArticles();
+                }
+            }));
+
+            document.getElementById('search-input').addEventListener('input', e => {
+                const searchValue = e.target.value.toLowerCase();
+                
+                if (state.currentView === 'feed') {
+                    state.feedFilters.search = searchValue;
+                    renderArticles();
+                } else if (state.currentView === 'nejm') {
+                    state.nejmFilters.search = searchValue;
+                    renderNEJMArticles();
+                }
+            });
+
+            document.getElementById('refresh-btn').addEventListener('click', () => {
+                fetchAndDisplayArticles();
+            });
+
+            document.getElementById('date-filter').addEventListener('change', function() {
+                const dateValue = this.value;
+                
+                if (state.currentView === 'feed') {
+                    state.feedFilters.date = dateValue;
+                    renderArticles();
+                } else if (state.currentView === 'nejm') {
+                    state.nejmFilters.date = dateValue;
+                    renderNEJMArticles();
+                }
+            });
+        }
+
+        function setupFileUpload() {
+            const uploadTrigger = document.getElementById('upload-trigger');
+            const fileInput = document.getElementById('file-upload');
+            
+            uploadTrigger.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files);
+                files.forEach(file => {
+                    const fileId = 'file-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+                    const fileName = file.name;
+                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                    const fileDate = new Date().toLocaleDateString();
+                    
+                    state.analysisFiles.push({
+                        id: fileId,
+                        name: fileName,
+                        size: fileSize,
+                        date: fileDate,
+                        type: file.type
+                    });
+                });
+                
+                updateAnalysisDisplay();
+                saveState();
+                fileInput.value = '';
+                
+                alert(`Uploaded ${files.length} file(s) to 544 Analysis Hub`);
+            });
+        }
+
+        function updateAnalysisDisplay() {
+            const container = document.getElementById('analysis-files');
+            
+            if (state.analysisFiles.length === 0) {
+                container.innerHTML = '<p style="color: var(--slate-500);">No files uploaded yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            state.analysisFiles.forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'analysis-file';
+                div.innerHTML = `
+                    <i class="fas fa-file-alt"></i>
+                    <div style="flex: 1;">
+                        <strong style="display: block; color: var(--slate-800);">${file.name}</strong>
+                        <small style="color: var(--slate-500);">${file.size} MB • ${file.date}</small>
+                    </div>
+                    <button class="delete-file" data-id="${file.id}" style="background: none; border: none; color: var(--slate-400); cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                div.querySelector('.delete-file').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const fileId = this.dataset.id;
+                    state.analysisFiles = state.analysisFiles.filter(f => f.id !== fileId);
+                    updateAnalysisDisplay();
+                    saveState();
+                });
+                
+                container.appendChild(div);
+            });
+        }
+
+        async function fetchAndDisplayArticles() {
+            state.loading = true;
+            renderLoading();
+            
+            try {
+                const enabledSources = state.config.sources.filter(s => s.enabled);
+                const allResults = await Promise.allSettled(enabledSources.map(fetchFeed));
+                
+                let flatItems = [];
+                let nejmItems = [];
+                
+                allResults.forEach((result, index) => {
+                    if (result.status === 'fulfilled') {
+                        const source = enabledSources[index];
+                        const items = result.value;
+                        
+                        if (source.id === 'nejm-ai-podcast') {
+                            nejmItems = items;
+                        } else {
+                            flatItems = flatItems.concat(items);
+                        }
+                    } else {
+                        console.error(`Failed to fetch ${enabledSources[index].name}:`, result.reason);
+                    }
+                });
+                
+                const aiFiltered = flatItems.filter(item => {
+                    const content = (item.title + ' ' + item.summary).toLowerCase();
+                    return AI_KEYWORDS.some(keyword => 
+                        keyword === 'ai' ? content.split(/\W+/).includes('ai') : content.includes(keyword)
+                    );
+                });
+                
+                const nejmFiltered = nejmItems.filter(item => {
+                    const content = (item.title + ' ' + item.summary).toLowerCase();
+                    return AI_KEYWORDS.some(keyword => 
+                        keyword === 'ai' ? content.split(/\W+/).includes('ai') : content.includes(keyword)
+                    );
+                });
+                
+                aiFiltered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                nejmFiltered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                
+                state.articles = aiFiltered.map(item => ({
+                    ...item,
+                    bookmarked: state.bookmarks.has(item.id)
+                }));
+                
+                state.nejmArticles = nejmFiltered.map(item => ({
+                    ...item,
+                    bookmarked: state.bookmarks.has(item.id)
+                }));
+                
+            } catch (error) {
+                console.error('Fetch error:', error);
+                state.articles = DEFAULT_SOURCES
+                    .filter(s => s.enabled && s.id !== 'nejm-ai-podcast')
+                    .map((source, idx) => ({
+                        id: `sample-${idx}`,
+                        title: `Sample: AI Breakthrough in ${source.category}`,
+                        link: source.homepage,
+                        pubDate: new Date(Date.now() - idx * 86400000).toISOString(),
+                        summary: `Sample article showing AI developments in ${source.category}. This is placeholder content.`,
+                        author: source.name,
+                        categories: [source.category, 'AI'],
+                        sourceName: source.name,
+                        sourceUrl: source.homepage,
+                        bookmarked: idx % 3 === 0
+                    }));
+                
+                state.nejmArticles = [{
+                    id: 'nejm-sample',
+                    title: 'NEJM AI: Machine Learning in Clinical Practice',
+                    link: 'https://ai-podcast.nejm.org/',
+                    pubDate: new Date().toISOString(),
+                    summary: 'Discussion on implementing machine learning models in clinical settings.',
+                    author: 'NEJM AI Podcast',
+                    categories: ['Clinical AI', 'Research'],
+                    sourceName: 'NEJM AI Podcast',
+                    sourceUrl: 'https://ai-podcast.nejm.org/',
+                    bookmarked: false
+                }];
+            }
+            
+            state.loading = false;
+            renderArticles();
+            renderNEJMArticles();
+            renderSidebar();
+            saveState();
+        }
+
+        async function fetchFeed(source) {
+            try {
+                const response = await fetch(`${CORS_PROXY}${encodeURIComponent(source.url)}`, {
+                    headers: { 'Accept': 'application/xml' }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const xmlText = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                
+                const parseError = xmlDoc.querySelector('parsererror');
+                if (parseError) throw new Error('Failed to parse XML');
+                
+                const items = xmlDoc.querySelectorAll('item, entry');
+                
+                return Array.from(items).map(item => {
+                    const title = item.querySelector('title')?.textContent || 'Untitled';
+                    let link = item.querySelector('link')?.textContent || 
+                              item.querySelector('link')?.getAttribute('href') || 
+                              item.querySelector('id')?.textContent || 
+                              '#';
+                    
+                    if (!link || link === '#') {
+                        const atomLink = item.querySelector('link[rel="alternate"]');
+                        if (atomLink) link = atomLink.getAttribute('href') || '#';
+                    }
+                    
+                    const pubDate = item.querySelector('pubDate, published, updated')?.textContent || new Date().toISOString();
+                    const summary = item.querySelector('description, summary, content')?.textContent || '';
+                    const author = item.querySelector('author, creator')?.textContent || 
+                                 item.querySelector('dc\\:creator')?.textContent || 
+                                 source.name;
+                    
+                    const categories = Array.from(item.querySelectorAll('category, category term'))
+                        .map(cat => cat.textContent || cat.getAttribute('term'))
+                        .filter(Boolean);
+                    
+                    return {
+                        id: btoa(link).slice(0, 16),
+                        title: title.trim(),
+                        link: link.trim(),
+                        pubDate: new Date(pubDate).toISOString(),
+                        summary: summary.replace(/<[^>]*>/g, '').slice(0, 200).trim() + '...',
+                        author: author.trim(),
+                        categories: categories.length > 0 ? categories : [source.category],
+                        sourceName: source.name,
+                        sourceUrl: source.homepage,
+                        bookmarked: state.bookmarks.has(btoa(link).slice(0, 16))
+                    };
+                });
+                
+            } catch (error) {
+                console.error(`Error fetching ${source.name}:`, error);
+                return [];
+            }
+        }
+
+        function renderLoading() {
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('articles-grid').classList.add('hidden');
+            document.getElementById('empty-state').classList.add('hidden');
+        }
+
+        function applyDateFilter(articles, dateFilter) {
+            const now = new Date();
+            let filtered = [...articles];
+            
+            switch(dateFilter) {
+                case 'newest':
+                    filtered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                    break;
+                case 'oldest':
+                    filtered.sort((a, b) => new Date(a.pubDate) - new Date(b.pubDate));
+                    break;
+                case 'lastweek':
+                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    filtered = filtered.filter(a => new Date(a.pubDate) >= weekAgo);
+                    filtered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                    break;
+                case 'lastmonth':
+                    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    filtered = filtered.filter(a => new Date(a.pubDate) >= monthAgo);
+                    filtered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                    break;
+            }
+            
+            return filtered;
+        }
+
+        function renderArticles() {
+            if (state.loading) {
+                renderLoading();
+                return;
+            }
+            
+            const filters = state.feedFilters;
+            let displayArticles = state.articles.filter(article => {
+                const matchesSearch = !filters.search || 
+                    article.title.toLowerCase().includes(filters.search) || 
+                    article.summary.toLowerCase().includes(filters.search);
+                
+                const matchesSource = filters.source === 'all' || 
+                    article.sourceName === state.config.sources.find(s => s.id === filters.source)?.name;
+                
+                return matchesSearch && matchesSource;
+            });
+            
+            displayArticles = applyDateFilter(displayArticles, filters.date);
+            
+            const grid = document.getElementById('articles-grid');
+            const empty = document.getElementById('empty-state');
+            
+            if (displayArticles.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                document.getElementById('loading-state').classList.add('hidden');
+                return;
+            }
+            
+            document.getElementById('loading-state').classList.add('hidden');
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+            
+            renderArticleList(displayArticles, grid);
+        }
+
+        function renderNEJMArticles() {
+            const grid = document.getElementById('nejm-grid');
+            const loading = document.getElementById('nejm-loading');
+            const empty = document.getElementById('nejm-empty');
+            
+            loading.classList.add('hidden');
+            
+            const filters = state.nejmFilters;
+            let displayArticles = state.nejmArticles.filter(article => {
+                return !filters.search || 
+                    article.title.toLowerCase().includes(filters.search) || 
+                    article.summary.toLowerCase().includes(filters.search);
+            });
+            
+            displayArticles = applyDateFilter(displayArticles, filters.date);
+            
+            if (displayArticles.length === 0) {
+                grid.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+            
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+            
+            renderArticleList(displayArticles, grid);
+        }
+
+        function renderArticleList(articles, container) {
+            articles.forEach(article => {
+                const template = document.getElementById('article-template');
+                const clone = template.content.cloneNode(true);
+                const articleEl = clone.querySelector('.article-card');
+                
+                articleEl.querySelector('.article-source').textContent = article.sourceName;
+                
+                const bookmarkBtn = articleEl.querySelector('.bookmark-btn');
+                if (state.bookmarks.has(article.id)) {
+                    bookmarkBtn.classList.add('active');
+                    bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+                }
+                
+                bookmarkBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleBookmark(article.id, bookmarkBtn);
+                });
+                
+                const titleLink = articleEl.querySelector('.article-title a');
+                titleLink.textContent = article.title;
+                titleLink.href = article.link;
+                
+                articleEl.querySelector('.date-text').textContent = new Date(article.pubDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                
+                articleEl.querySelector('.author-text').textContent = article.author;
+                articleEl.querySelector('.article-summary').textContent = article.summary;
+                
+                const readFullBtn = articleEl.querySelector('.read-full-btn');
+                readFullBtn.href = article.link;
+                
+                const tagsContainer = articleEl.querySelector('.article-tags');
+                article.categories.slice(0, 3).forEach(cat => {
+                    const tag = document.createElement('span');
+                    tag.textContent = cat;
+                    tagsContainer.appendChild(tag);
+                });
+                
+                // REMOVED: AI Insight button event listener
+                
+                container.appendChild(articleEl);
+            });
+        }
+
+        function toggleBookmark(articleId, bookmarkBtn) {
+            const wasBookmarked = state.bookmarks.has(articleId);
+            
+            if (wasBookmarked) {
+                state.bookmarks.delete(articleId);
+                bookmarkBtn.classList.remove('active');
+                bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
+            } else {
+                state.bookmarks.add(articleId);
+                bookmarkBtn.classList.add('active');
+                bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
+            }
+            
+            state.articles = state.articles.map(article => 
+                article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
+            );
+            
+            state.nejmArticles = state.nejmArticles.map(article => 
+                article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
+            );
+            
+            const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
+            document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
+            
+            saveState();
+        }
+
+        function renderSidebar() {
+            const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
+            document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
+            
+            if (state.currentView === 'feed') {
+                document.getElementById('date-filter').value = state.feedFilters.date;
+            } else if (state.currentView === 'nejm') {
+                document.getElementById('date-filter').value = state.nejmFilters.date;
+            }
+            
+            if (state.currentView === 'feed') {
+                document.getElementById('search-input').value = state.feedFilters.search;
+            } else if (state.currentView === 'nejm') {
+                document.getElementById('search-input').value = state.nejmFilters.search;
+            }
+            
+            const focusArea = document.getElementById('focus-area-section');
+            if (state.currentView === 'feed') {
+                focusArea.classList.remove('hidden');
+            } else {
+                focusArea.classList.add('hidden');
+            }
+            
+            const sourceList = document.getElementById('source-list');
+            sourceList.innerHTML = '';
+            
+            state.config.sources.forEach(source => {
+                if (!source.enabled || source.id === 'nejm-ai-podcast') return;
+                
+                const btn = document.createElement('button');
+                btn.className = 'nav-item source-item';
+                if (state.currentView === 'feed' && state.feedFilters.source === source.id) {
+                    btn.classList.add('active');
+                }
+                
+                btn.dataset.source = source.id;
+                btn.innerHTML = `
+                    <div class="nav-item-content">
+                        <div class="source-dot"></div>
+                        <span class="source-name">${source.name}</span>
+                    </div>
+                `;
+                
+                btn.addEventListener('click', () => {
+                    if (state.currentView === 'feed') {
+                        document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
+                        btn.classList.add('active');
+                        document.getElementById('all-topics-btn').classList.remove('active');
+                        
+                        state.feedFilters.source = source.id;
+                        renderArticles();
+                    }
+                });
+                
+                sourceList.appendChild(btn);
+            });
+            
+            const allTopicsBtn = document.getElementById('all-topics-btn');
+            allTopicsBtn.addEventListener('click', () => {
+                if (state.currentView === 'feed') {
+                    document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
+                    allTopicsBtn.classList.add('active');
+                    state.feedFilters.source = 'all';
+                    renderArticles();
+                }
+            });
+            
+            if (state.currentView === 'feed' && state.feedFilters.source === 'all') {
+                allTopicsBtn.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
