@@ -61,7 +61,6 @@
         .nav-item.active .source-dot { background-color: var(--primary-500); }
         .source-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
         
-        /* ===== FOCUS AREA SECTION - Can be hidden ===== */
         .nav-section.focus-area { transition: all 0.3s ease; }
         .nav-section.focus-area.hidden { display: none; }
         
@@ -188,22 +187,18 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-label">Navigation</div>
-                    <!-- NEW ORDER: 544 Analysis first -->
                     <button class="nav-item" data-view="analysis">
                         <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
                     </button>
-                    <!-- NEJM AI second -->
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
                     </button>
-                    <!-- AI Live Feed last (but active by default) -->
                     <button class="nav-item active" data-view="feed">
                         <div class="nav-item-content"><i class="fas fa-bolt"></i><span>AI Live Feed</span></div>
                         <span class="unread-count" id="unread-count">0</span>
                     </button>
                 </div>
                 
-                <!-- FOCUS AREA SECTION - Only visible in AI Live Feed -->
                 <div class="nav-section focus-area" id="focus-area-section">
                     <div class="nav-label">Focus Areas</div>
                     <div class="date-filter-container">
@@ -245,7 +240,6 @@
             </header>
 
             <div class="content-area custom-scrollbar">
-                <!-- 544 ANALYSIS VIEW -->
                 <div id="analysis-view" class="view-section">
                     <div class="analysis-view">
                         <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">544 Analysis Hub</h2>
@@ -267,7 +261,6 @@
                     </div>
                 </div>
 
-                <!-- NEJM AI VIEW -->
                 <div id="nejm-view" class="view-section">
                     <div class="feed-header">
                         <div class="feed-title">
@@ -287,7 +280,6 @@
                     </div>
                 </div>
 
-                <!-- AI LIVE FEED VIEW -->
                 <div id="feed-view" class="view-section active">
                     <div class="feed-header">
                         <div class="feed-title">
@@ -349,7 +341,9 @@
             { id: 'bayesian-health', name: 'Bayesian Health', url: 'https://www.bayesianhealth.com/feed/', homepage: 'https://www.bayesianhealth.com/', category: 'Clinical AI', enabled: true }
         ];
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';  // CORRECTED CORS PROXY
+        
+        // FIXED: Changed from /raw?url= to /get?url= for proper response format
+        const CORS_PROXY = 'https://api.allorigins.win/get?url=';
 
         // ===== STATE =====
         let state = {
@@ -357,7 +351,6 @@
             articles: [],
             nejmArticles: [],
             loading: true,
-            // INDEPENDENT FILTER STATES FOR EACH TAB
             feedFilters: { search: '', source: 'all', date: 'newest' },
             nejmFilters: { search: '', date: 'newest' },
             config: { refreshInterval: 60, sources: DEFAULT_SOURCES },
@@ -404,7 +397,6 @@
         }
 
         function setupEvents() {
-            // View navigation
             document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', function() {
                 document.querySelectorAll('.nav-item[data-view]').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
@@ -412,14 +404,11 @@
                 const view = this.dataset.view;
                 state.currentView = view;
                 
-                // Hide all views, show active
                 document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
                 document.getElementById(`${view}-view`).classList.add('active');
                 
-                // Clear search input when switching views
                 document.getElementById('search-input').value = '';
                 
-                // Show/hide Focus Area based on current view
                 const focusArea = document.getElementById('focus-area-section');
                 if (view === 'feed') {
                     focusArea.classList.remove('hidden');
@@ -427,7 +416,6 @@
                     focusArea.classList.add('hidden');
                 }
                 
-                // Update UI based on view
                 if (view === 'nejm') {
                     renderNEJMArticles();
                 } else if (view === 'feed') {
@@ -435,7 +423,6 @@
                 }
             }));
 
-            // Search - updates current view's search filter
             document.getElementById('search-input').addEventListener('input', e => {
                 const searchValue = e.target.value.toLowerCase();
                 
@@ -448,12 +435,10 @@
                 }
             });
 
-            // Refresh button
             document.getElementById('refresh-btn').addEventListener('click', () => {
                 fetchAndDisplayArticles();
             });
 
-            // Date filter - updates current view's date filter
             document.getElementById('date-filter').addEventListener('change', function() {
                 const dateValue = this.value;
                 
@@ -534,6 +519,105 @@
             });
         }
 
+        // FIXED: Complete rewrite of fetchFeed function to properly handle RSS feeds
+        async function fetchFeed(source) {
+            try {
+                const encodedUrl = encodeURIComponent(source.url);
+                const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
+                    headers: { 'Accept': 'application/xml' }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const data = await response.json();
+                const xmlText = data.contents;
+                
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                
+                const parseError = xmlDoc.querySelector('parsererror');
+                if (parseError) throw new Error('Failed to parse XML');
+                
+                // Try multiple feed formats
+                let items = [];
+                
+                // Try standard RSS items
+                if (xmlDoc.querySelectorAll('item').length > 0) {
+                    items = xmlDoc.querySelectorAll('item');
+                } 
+                // Try Atom entries
+                else if (xmlDoc.querySelectorAll('entry').length > 0) {
+                    items = xmlDoc.querySelectorAll('entry');
+                }
+                // Try RSS with namespace
+                else if (xmlDoc.querySelectorAll('rss item').length > 0) {
+                    items = xmlDoc.querySelectorAll('rss item');
+                }
+                // Fallback - if no items found, return empty array (will trigger sample data)
+                else {
+                    console.log(`No items found for ${source.name}`);
+                    return [];
+                }
+                
+                return Array.from(items).map(item => {
+                    // Helper function to get text content
+                    const getText = (selector) => {
+                        const element = item.querySelector(selector);
+                        return element?.textContent || element?.getAttribute('term') || '';
+                    };
+                    
+                    const title = getText('title') || 'Untitled';
+                    
+                    // Get link - try different formats
+                    let link = '';
+                    const linkElem = item.querySelector('link');
+                    if (linkElem) {
+                        link = linkElem.getAttribute('href') || linkElem.textContent || '';
+                    }
+                    if (!link) {
+                        const guid = item.querySelector('guid');
+                        link = guid?.textContent || source.homepage;
+                    }
+                    
+                    const pubDate = getText('pubDate') || getText('published') || getText('updated') || new Date().toISOString();
+                    
+                    // Get description/summary
+                    let summary = getText('description') || getText('summary') || getText('content') || '';
+                    summary = summary.replace(/<[^>]*>/g, '').slice(0, 250).trim();
+                    
+                    const author = getText('author') || getText('creator') || source.name;
+                    
+                    // Get categories
+                    const categories = [];
+                    item.querySelectorAll('category, topic, tag').forEach(cat => {
+                        const catText = cat.textContent || cat.getAttribute('term') || cat.getAttribute('label');
+                        if (catText) categories.push(catText);
+                    });
+                    
+                    if (categories.length === 0) {
+                        categories.push(source.category);
+                    }
+                    
+                    return {
+                        id: btoa(link + source.id).slice(0, 16),
+                        title: title.trim(),
+                        link: link.trim() || source.homepage,
+                        pubDate: new Date(pubDate).toISOString(),
+                        summary: summary,
+                        author: author.trim(),
+                        categories: categories,
+                        sourceName: source.name,
+                        sourceUrl: source.homepage,
+                        bookmarked: state.bookmarks.has(btoa(link + source.id).slice(0, 16))
+                    };
+                });
+                
+            } catch (error) {
+                console.error(`Error fetching ${source.name}:`, error);
+                return [];
+            }
+        }
+
         async function fetchAndDisplayArticles() {
             state.loading = true;
             renderLoading();
@@ -560,7 +644,7 @@
                     }
                 });
                 
-                // Filter for AI content
+                // YOUR ORIGINAL AI FILTER - UNCHANGED
                 const aiFiltered = flatItems.filter(item => {
                     const content = (item.title + ' ' + item.summary).toLowerCase();
                     return AI_KEYWORDS.some(keyword => 
@@ -575,7 +659,6 @@
                     );
                 });
                 
-                // Apply date sorting (newest first by default)
                 aiFiltered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
                 nejmFiltered.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
                 
@@ -589,36 +672,15 @@
                     bookmarked: state.bookmarks.has(item.id)
                 }));
                 
+                // If no articles found from any source, provide sample data so UI isn't empty
+                if (state.articles.length === 0 && state.nejmArticles.length === 0) {
+                    console.log('No articles found from any source, providing sample data');
+                    provideSampleData();
+                }
+                
             } catch (error) {
                 console.error('Fetch error:', error);
-                // Fallback sample data
-                state.articles = DEFAULT_SOURCES
-                    .filter(s => s.enabled && s.id !== 'nejm-ai-podcast')
-                    .map((source, idx) => ({
-                        id: `sample-${idx}`,
-                        title: `Sample: AI Breakthrough in ${source.category}`,
-                        link: source.homepage,
-                        pubDate: new Date(Date.now() - idx * 86400000).toISOString(),
-                        summary: `Sample article showing AI developments in ${source.category}. This is placeholder content.`,
-                        author: source.name,
-                        categories: [source.category, 'AI'],
-                        sourceName: source.name,
-                        sourceUrl: source.homepage,
-                        bookmarked: idx % 3 === 0
-                    }));
-                
-                state.nejmArticles = [{
-                    id: 'nejm-sample',
-                    title: 'NEJM AI: Machine Learning in Clinical Practice',
-                    link: 'https://ai-podcast.nejm.org/',
-                    pubDate: new Date().toISOString(),
-                    summary: 'Discussion on implementing machine learning models in clinical settings.',
-                    author: 'NEJM AI Podcast',
-                    categories: ['Clinical AI', 'Research'],
-                    sourceName: 'NEJM AI Podcast',
-                    sourceUrl: 'https://ai-podcast.nejm.org/',
-                    bookmarked: false
-                }];
+                provideSampleData();
             }
             
             state.loading = false;
@@ -627,64 +689,36 @@
             renderSidebar();
             saveState();
         }
-
-        async function fetchFeed(source) {
-            try {
-                const response = await fetch(`${CORS_PROXY}${encodeURIComponent(source.url)}`, {
-                    headers: { 'Accept': 'application/xml' }
-                });
-                
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                
-                const xmlText = await response.text();
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                
-                const parseError = xmlDoc.querySelector('parsererror');
-                if (parseError) throw new Error('Failed to parse XML');
-                
-                const items = xmlDoc.querySelectorAll('item, entry');
-                
-                return Array.from(items).map(item => {
-                    const title = item.querySelector('title')?.textContent || 'Untitled';
-                    let link = item.querySelector('link')?.textContent || 
-                              item.querySelector('link')?.getAttribute('href') || 
-                              item.querySelector('id')?.textContent || 
-                              '#';
-                    
-                    if (!link || link === '#') {
-                        const atomLink = item.querySelector('link[rel="alternate"]');
-                        if (atomLink) link = atomLink.getAttribute('href') || '#';
-                    }
-                    
-                    const pubDate = item.querySelector('pubDate, published, updated')?.textContent || new Date().toISOString();
-                    const summary = item.querySelector('description, summary, content')?.textContent || '';
-                    const author = item.querySelector('author, creator')?.textContent || 
-                                 item.querySelector('dc\\:creator')?.textContent || 
-                                 source.name;
-                    
-                    const categories = Array.from(item.querySelectorAll('category, category term'))
-                        .map(cat => cat.textContent || cat.getAttribute('term'))
-                        .filter(Boolean);
-                    
-                    return {
-                        id: btoa(link).slice(0, 16),
-                        title: title.trim(),
-                        link: link.trim(),
-                        pubDate: new Date(pubDate).toISOString(),
-                        summary: summary.replace(/<[^>]*>/g, '').slice(0, 200).trim() + '...',
-                        author: author.trim(),
-                        categories: categories.length > 0 ? categories : [source.category],
-                        sourceName: source.name,
-                        sourceUrl: source.homepage,
-                        bookmarked: state.bookmarks.has(btoa(link).slice(0, 16))
-                    };
-                });
-                
-            } catch (error) {
-                console.error(`Error fetching ${source.name}:`, error);
-                return [];
-            }
+        
+        // Helper function to provide sample data when feeds fail
+        function provideSampleData() {
+            state.articles = DEFAULT_SOURCES
+                .filter(s => s.enabled && s.id !== 'nejm-ai-podcast')
+                .map((source, idx) => ({
+                    id: `sample-${idx}-${Date.now()}`,
+                    title: `Sample: AI Breakthrough in ${source.category}`,
+                    link: source.homepage,
+                    pubDate: new Date(Date.now() - idx * 86400000).toISOString(),
+                    summary: `Sample article showing AI developments in ${source.category}. This is placeholder content while feeds are being configured.`,
+                    author: source.name,
+                    categories: [source.category, 'AI'],
+                    sourceName: source.name,
+                    sourceUrl: source.homepage,
+                    bookmarked: idx % 3 === 0
+                }));
+            
+            state.nejmArticles = [{
+                id: 'nejm-sample-' + Date.now(),
+                title: 'NEJM AI: Machine Learning in Clinical Practice',
+                link: 'https://ai-podcast.nejm.org/',
+                pubDate: new Date().toISOString(),
+                summary: 'Discussion on implementing machine learning models in clinical settings.',
+                author: 'NEJM AI Podcast',
+                categories: ['Clinical AI', 'Research'],
+                sourceName: 'NEJM AI Podcast',
+                sourceUrl: 'https://ai-podcast.nejm.org/',
+                bookmarked: false
+            }];
         }
 
         function renderLoading() {
@@ -737,7 +771,6 @@
                 return matchesSearch && matchesSource;
             });
             
-            // Apply date filter
             displayArticles = applyDateFilter(displayArticles, filters.date);
             
             const grid = document.getElementById('articles-grid');
@@ -772,7 +805,6 @@
                     article.summary.toLowerCase().includes(filters.search);
             });
             
-            // Apply date filter
             displayArticles = applyDateFilter(displayArticles, filters.date);
             
             if (displayArticles.length === 0) {
@@ -802,7 +834,6 @@
                     bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
                 }
                 
-                // Add click handler for bookmarking
                 bookmarkBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     toggleBookmark(article.id, bookmarkBtn);
@@ -856,18 +887,15 @@
             const wasBookmarked = state.bookmarks.has(articleId);
             
             if (wasBookmarked) {
-                // REMOVE from bookmarks
                 state.bookmarks.delete(articleId);
                 bookmarkBtn.classList.remove('active');
                 bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
             } else {
-                // ADD to bookmarks
                 state.bookmarks.add(articleId);
                 bookmarkBtn.classList.add('active');
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
             }
             
-            // Update articles in state
             state.articles = state.articles.map(article => 
                 article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
             );
@@ -876,7 +904,6 @@
                 article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
             );
             
-            // Update unread count in sidebar
             const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
             document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
             
@@ -884,25 +911,21 @@
         }
 
         function renderSidebar() {
-            // Update unread count
             const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
             document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
             
-            // Set date filter to current view's value
             if (state.currentView === 'feed') {
                 document.getElementById('date-filter').value = state.feedFilters.date;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('date-filter').value = state.nejmFilters.date;
             }
             
-            // Set search input to current view's value
             if (state.currentView === 'feed') {
                 document.getElementById('search-input').value = state.feedFilters.search;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('search-input').value = state.nejmFilters.search;
             }
             
-            // Show/hide Focus Area based on current view
             const focusArea = document.getElementById('focus-area-section');
             if (state.currentView === 'feed') {
                 focusArea.classList.remove('hidden');
@@ -910,7 +933,6 @@
                 focusArea.classList.add('hidden');
             }
             
-            // Render source list in Focus Areas (only for feed view)
             const sourceList = document.getElementById('source-list');
             sourceList.innerHTML = '';
             
@@ -933,12 +955,10 @@
                 
                 btn.addEventListener('click', () => {
                     if (state.currentView === 'feed') {
-                        // Update active states
                         document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
                         btn.classList.add('active');
                         document.getElementById('all-topics-btn').classList.remove('active');
                         
-                        // Update feed filter
                         state.feedFilters.source = source.id;
                         renderArticles();
                     }
@@ -947,7 +967,6 @@
                 sourceList.appendChild(btn);
             });
             
-            // Add click handler for "All AI Topics" button
             const allTopicsBtn = document.getElementById('all-topics-btn');
             allTopicsBtn.addEventListener('click', () => {
                 if (state.currentView === 'feed') {
@@ -958,7 +977,6 @@
                 }
             });
             
-            // Set initial active state for "All AI Topics"
             if (state.currentView === 'feed' && state.feedFilters.source === 'all') {
                 allTopicsBtn.classList.add('active');
             }
