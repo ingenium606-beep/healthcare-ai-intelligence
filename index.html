@@ -336,7 +336,7 @@
         ];
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
         
-        const CORS_PROXY = 'https://api.allorigins.win/get?url=';
+        const RSS2JSON_API = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
         // ===== STATE =====
         let state = {
@@ -515,76 +515,40 @@
         async function fetchFeed(source) {
             try {
                 const encodedUrl = encodeURIComponent(source.url);
-                const response = await fetch(`${CORS_PROXY}${encodedUrl}`, {
-                    headers: { 'Accept': 'application/xml' }
-                });
+                const response = await fetch(`${RSS2JSON_API}${encodedUrl}`);
                 
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 
                 const data = await response.json();
-                const xmlText = data.contents;
                 
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
-                
-                const parseError = xmlDoc.querySelector('parsererror');
-                if (parseError) throw new Error('Failed to parse XML');
-                
-                let items = [];
-                
-                if (xmlDoc.querySelectorAll('item').length > 0) {
-                    items = xmlDoc.querySelectorAll('item');
-                } 
-                else if (xmlDoc.querySelectorAll('entry').length > 0) {
-                    items = xmlDoc.querySelectorAll('entry');
+                if (data.status !== 'ok') {
+                    console.error(`RSS2JSON error for ${source.name}:`, data.message || 'Unknown error');
+                    throw new Error(data.message || 'RSS2JSON request failed');
                 }
-                else if (xmlDoc.querySelectorAll('rss item').length > 0) {
-                    items = xmlDoc.querySelectorAll('rss item');
-                }
-                else {
+                
+                if (!data.items || data.items.length === 0) {
                     console.log(`No items found for ${source.name}`);
                     return [];
                 }
                 
-                return Array.from(items).map(item => {
-                    const getText = (selector) => {
-                        const element = item.querySelector(selector);
-                        return element?.textContent || element?.getAttribute('term') || '';
-                    };
+                return data.items.map(item => {
+                    const title = item.title || 'Untitled';
+                    const link = item.link || item.guid || source.homepage;
+                    const pubDate = item.pubDate || new Date().toISOString();
                     
-                    const title = getText('title') || 'Untitled';
-                    
-                    let link = '';
-                    const linkElem = item.querySelector('link');
-                    if (linkElem) {
-                        link = linkElem.getAttribute('href') || linkElem.textContent || '';
-                    }
-                    if (!link) {
-                        const guid = item.querySelector('guid');
-                        link = guid?.textContent || source.homepage;
-                    }
-                    
-                    const pubDate = getText('pubDate') || getText('published') || getText('updated') || new Date().toISOString();
-                    
-                    let summary = getText('description') || getText('summary') || getText('content') || '';
+                    let summary = item.description || item.content || '';
                     summary = summary.replace(/<[^>]*>/g, '').slice(0, 250).trim();
                     
-                    const author = getText('author') || getText('creator') || source.name;
+                    const author = item.author || source.name;
                     
-                    const categories = [];
-                    item.querySelectorAll('category, topic, tag').forEach(cat => {
-                        const catText = cat.textContent || cat.getAttribute('term') || cat.getAttribute('label');
-                        if (catText) categories.push(catText);
-                    });
-                    
-                    if (categories.length === 0) {
-                        categories.push(source.category);
-                    }
+                    const categories = item.categories && item.categories.length > 0 
+                        ? item.categories 
+                        : [source.category];
                     
                     return {
                         id: btoa(link + source.id).slice(0, 16),
                         title: title.trim(),
-                        link: link.trim() || source.homepage,
+                        link: link.trim(),
                         pubDate: new Date(pubDate).toISOString(),
                         summary: summary,
                         author: author.trim(),
