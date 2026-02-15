@@ -61,6 +61,7 @@
         .nav-item.active .source-dot { background-color: var(--primary-500); }
         .source-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
         
+        /* ===== FOCUS AREA SECTION - Can be hidden ===== */
         .nav-section.focus-area { transition: all 0.3s ease; }
         .nav-section.focus-area.hidden { display: none; }
         
@@ -133,7 +134,12 @@
         .article-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-top: auto; }
         .article-tags span { font-size: 0.625rem; background-color: var(--slate-100); color: var(--slate-500); padding: 0.25rem 0.5rem; border-radius: 9999px; }
         .article-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--slate-100); background-color: var(--slate-50); display: flex; gap: 0.75rem; }
-        .read-full-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; background-color: var(--primary-600); color: white; border: none; box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1); }
+        .ai-insight-btn, .read-full-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.5rem; border-radius: var(--radius-lg); font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .ai-insight-btn { background-color: white; border: 1px solid var(--indigo-200); color: var(--indigo-600); }
+        .ai-insight-btn:hover { background-color: var(--indigo-50); }
+        .ai-insight-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .ai-insight-btn i.fa-spin { animation: spin 1s linear infinite; }
+        .read-full-btn { background-color: var(--primary-600); color: white; border: none; box-shadow: 0 1px 2px 0 rgba(59, 130, 246, 0.1); }
         .read-full-btn:hover { background-color: var(--primary-700); }
         
         .empty-state { text-align: center; padding: 6rem 2rem; background-color: white; border-radius: 1.5rem; border: 2px dashed var(--slate-200); max-width: 48rem; margin: 0 auto; }
@@ -143,86 +149,6 @@
         .empty-state p { color: var(--slate-500); max-width: 20rem; margin: 0 auto; }
         
         .analysis-view { padding: 2rem; max-width: 80rem; margin: 0 auto; }
-        
-        /* Destination field - just the URL, no instructions */
-        .destination-section {
-            background: white;
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-xl);
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .destination-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .destination-header i {
-            font-size: 1.5rem;
-            color: var(--primary-600);
-            background: var(--primary-50);
-            padding: 0.75rem;
-            border-radius: var(--radius);
-        }
-        
-        .destination-header h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--slate-800);
-        }
-        
-        .destination-header p {
-            color: var(--slate-500);
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-        
-        .destination-url-container {
-            display: flex;
-            gap: 0.5rem;
-            background: var(--slate-50);
-            padding: 0.5rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--slate-200);
-        }
-        
-        .destination-url {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            background: white;
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius);
-            font-family: monospace;
-            font-size: 0.875rem;
-            color: var(--slate-700);
-            cursor: pointer;
-        }
-        
-        .destination-copy-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0 1.25rem;
-            background: var(--primary-600);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        .destination-copy-btn:hover {
-            background: var(--primary-700);
-        }
-        
-        .destination-copy-btn.copied {
-            background: var(--amber-500);
-        }
-        
         .upload-area { 
             border: 2px dashed var(--primary-300); border-radius: var(--radius-xl); padding: 3rem; text-align: center; 
             background-color: var(--primary-50); margin-bottom: 2rem; cursor: pointer; transition: all 0.2s;
@@ -262,18 +188,22 @@
             <nav class="sidebar-nav">
                 <div class="nav-section">
                     <div class="nav-label">Navigation</div>
+                    <!-- NEW ORDER: 544 Analysis first -->
                     <button class="nav-item" data-view="analysis">
                         <div class="nav-item-content"><i class="fas fa-chart-line"></i><span>544 Analysis</span></div>
                     </button>
+                    <!-- NEJM AI second -->
                     <button class="nav-item" data-view="nejm">
                         <div class="nav-item-content"><i class="fas fa-podcast"></i><span>NEJM AI</span></div>
                     </button>
+                    <!-- AI Live Feed last (but active by default) -->
                     <button class="nav-item active" data-view="feed">
                         <div class="nav-item-content"><i class="fas fa-bolt"></i><span>AI Live Feed</span></div>
                         <span class="unread-count" id="unread-count">0</span>
                     </button>
                 </div>
                 
+                <!-- FOCUS AREA SECTION - Only visible in AI Live Feed -->
                 <div class="nav-section focus-area" id="focus-area-section">
                     <div class="nav-label">Focus Areas</div>
                     <div class="date-filter-container">
@@ -315,31 +245,11 @@
             </header>
 
             <div class="content-area custom-scrollbar">
-                <!-- 544 ANALYSIS VIEW - ONLY URL FIELD, NO INSTRUCTIONS -->
+                <!-- 544 ANALYSIS VIEW -->
                 <div id="analysis-view" class="view-section">
                     <div class="analysis-view">
                         <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--slate-800); margin-bottom: 1rem;">544 Analysis Hub</h2>
                         <p style="color: var(--slate-500); margin-bottom: 2rem;">Upload and manage your curated analysis and feedback on selected topics.</p>
-                        
-                        <!-- ONLY the URL field - NO instructions, NO JSON examples -->
-                        <div class="destination-section">
-                            <div class="destination-header">
-                                <i class="fas fa-arrow-right-to-bracket"></i>
-                                <div>
-                                    <h3>Data Destination URL</h3>
-                                    <p>Send data to this URL to post to your Analysis Hub</p>
-                                </div>
-                            </div>
-                            
-                            <div class="destination-url-container">
-                                <input type="text" id="destination-url" class="destination-url" value="https://your-domain.com/api/544-analysis" readonly onclick="this.select()">
-                                <button id="copy-url-btn" class="destination-copy-btn">
-                                    <i class="far fa-copy"></i> Copy
-                                </button>
-                            </div>
-                            
-                            <!-- NO INSTRUCTIONS TEXT - just the URL field as requested -->
-                        </div>
                         
                         <div class="upload-area" id="upload-trigger">
                             <i class="fas fa-cloud-upload-alt"></i>
@@ -377,7 +287,7 @@
                     </div>
                 </div>
 
-                <!-- AI LIVE FEED VIEW - FULLY RESTORED AND WORKING -->
+                <!-- AI LIVE FEED VIEW -->
                 <div id="feed-view" class="view-section active">
                     <div class="feed-header">
                         <div class="feed-title">
@@ -420,7 +330,7 @@
                 <div class="article-tags"></div>
             </div>
             <div class="article-footer">
-                <!-- ONLY Read Full button remains - AI Insight button removed -->
+                <button class="ai-insight-btn"><i class="fas fa-wand-magic-sparkles"></i>Get AI Insight</button>
                 <a href="#" target="_blank" rel="noopener noreferrer" class="read-full-btn">Read Full<i class="fas fa-external-link-alt"></i></a>
             </div>
         </div>
@@ -439,7 +349,7 @@
             { id: 'bayesian-health', name: 'Bayesian Health', url: 'https://www.bayesianhealth.com/feed/', homepage: 'https://www.bayesianhealth.com/', category: 'Clinical AI', enabled: true }
         ];
         const AI_KEYWORDS = ['ai', 'artificial intelligence', 'machine learning', 'deep learning', 'neural network', 'algorithm', 'llm', 'gpt', 'nlp', 'computer vision', 'predictive model', 'automation'];
-        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';  // CORRECTED CORS PROXY
 
         // ===== STATE =====
         let state = {
@@ -447,6 +357,7 @@
             articles: [],
             nejmArticles: [],
             loading: true,
+            // INDEPENDENT FILTER STATES FOR EACH TAB
             feedFilters: { search: '', source: 'all', date: 'newest' },
             nejmFilters: { search: '', date: 'newest' },
             config: { refreshInterval: 60, sources: DEFAULT_SOURCES },
@@ -459,9 +370,8 @@
             loadState();
             setupEvents();
             renderSidebar();
-            fetchAndDisplayArticles(); // This will load the AI Live Feed
+            fetchAndDisplayArticles();
             setupFileUpload();
-            setupDestinationField();
         });
 
         // ===== FUNCTIONS =====
@@ -493,25 +403,6 @@
             } catch (e) { console.error('Save error:', e); }
         }
 
-        function setupDestinationField() {
-            const copyBtn = document.getElementById('copy-url-btn');
-            const urlInput = document.getElementById('destination-url');
-            
-            copyBtn.addEventListener('click', () => {
-                urlInput.select();
-                document.execCommand('copy');
-                
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                copyBtn.classList.add('copied');
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.classList.remove('copied');
-                }, 2000);
-            });
-        }
-
         function setupEvents() {
             // View navigation
             document.querySelectorAll('.nav-item[data-view]').forEach(btn => btn.addEventListener('click', function() {
@@ -521,11 +412,14 @@
                 const view = this.dataset.view;
                 state.currentView = view;
                 
+                // Hide all views, show active
                 document.querySelectorAll('.view-section').forEach(section => section.classList.remove('active'));
                 document.getElementById(`${view}-view`).classList.add('active');
                 
+                // Clear search input when switching views
                 document.getElementById('search-input').value = '';
                 
+                // Show/hide Focus Area based on current view
                 const focusArea = document.getElementById('focus-area-section');
                 if (view === 'feed') {
                     focusArea.classList.remove('hidden');
@@ -533,6 +427,7 @@
                     focusArea.classList.add('hidden');
                 }
                 
+                // Update UI based on view
                 if (view === 'nejm') {
                     renderNEJMArticles();
                 } else if (view === 'feed') {
@@ -540,6 +435,7 @@
                 }
             }));
 
+            // Search - updates current view's search filter
             document.getElementById('search-input').addEventListener('input', e => {
                 const searchValue = e.target.value.toLowerCase();
                 
@@ -552,10 +448,12 @@
                 }
             });
 
+            // Refresh button
             document.getElementById('refresh-btn').addEventListener('click', () => {
                 fetchAndDisplayArticles();
             });
 
+            // Date filter - updates current view's date filter
             document.getElementById('date-filter').addEventListener('change', function() {
                 const dateValue = this.value;
                 
@@ -839,6 +737,7 @@
                 return matchesSearch && matchesSource;
             });
             
+            // Apply date filter
             displayArticles = applyDateFilter(displayArticles, filters.date);
             
             const grid = document.getElementById('articles-grid');
@@ -856,7 +755,7 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
-            renderArticleList(displayArticles, grid);
+            renderArticleList(displayArticles, grid, false);
         }
 
         function renderNEJMArticles() {
@@ -873,6 +772,7 @@
                     article.summary.toLowerCase().includes(filters.search);
             });
             
+            // Apply date filter
             displayArticles = applyDateFilter(displayArticles, filters.date);
             
             if (displayArticles.length === 0) {
@@ -885,10 +785,10 @@
             grid.classList.remove('hidden');
             grid.innerHTML = '';
             
-            renderArticleList(displayArticles, grid);
+            renderArticleList(displayArticles, grid, false);
         }
 
-        function renderArticleList(articles, container) {
+        function renderArticleList(articles, container, isVault = false) {
             articles.forEach(article => {
                 const template = document.getElementById('article-template');
                 const clone = template.content.cloneNode(true);
@@ -902,6 +802,7 @@
                     bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
                 }
                 
+                // Add click handler for bookmarking
                 bookmarkBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     toggleBookmark(article.id, bookmarkBtn);
@@ -930,7 +831,22 @@
                     tagsContainer.appendChild(tag);
                 });
                 
-                // AI Insight button removed - no event listener needed
+                const aiBtn = articleEl.querySelector('.ai-insight-btn');
+                aiBtn.addEventListener('click', function() {
+                    const insightEl = articleEl.querySelector('.ai-insight');
+                    if (!insightEl.classList.contains('hidden')) return;
+                    
+                    this.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Generating...';
+                    this.disabled = true;
+                    
+                    setTimeout(() => {
+                        insightEl.classList.remove('hidden');
+                        insightEl.querySelector('.ai-text').textContent = 
+                            "AI analysis: This article discusses developments in healthcare AI with potential implications for clinical practice and patient outcomes.";
+                        this.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Insight Ready';
+                        this.disabled = true;
+                    }, 1500);
+                });
                 
                 container.appendChild(articleEl);
             });
@@ -940,15 +856,18 @@
             const wasBookmarked = state.bookmarks.has(articleId);
             
             if (wasBookmarked) {
+                // REMOVE from bookmarks
                 state.bookmarks.delete(articleId);
                 bookmarkBtn.classList.remove('active');
                 bookmarkBtn.innerHTML = '<i class="far fa-bookmark"></i>';
             } else {
+                // ADD to bookmarks
                 state.bookmarks.add(articleId);
                 bookmarkBtn.classList.add('active');
                 bookmarkBtn.innerHTML = '<i class="fas fa-bookmark"></i>';
             }
             
+            // Update articles in state
             state.articles = state.articles.map(article => 
                 article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
             );
@@ -957,6 +876,7 @@
                 article.id === articleId ? { ...article, bookmarked: !wasBookmarked } : article
             );
             
+            // Update unread count in sidebar
             const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
             document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
             
@@ -964,21 +884,25 @@
         }
 
         function renderSidebar() {
+            // Update unread count
             const unread = state.articles.filter(a => !state.bookmarks.has(a.id)).length;
             document.getElementById('unread-count').textContent = unread > 99 ? '99+' : unread;
             
+            // Set date filter to current view's value
             if (state.currentView === 'feed') {
                 document.getElementById('date-filter').value = state.feedFilters.date;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('date-filter').value = state.nejmFilters.date;
             }
             
+            // Set search input to current view's value
             if (state.currentView === 'feed') {
                 document.getElementById('search-input').value = state.feedFilters.search;
             } else if (state.currentView === 'nejm') {
                 document.getElementById('search-input').value = state.nejmFilters.search;
             }
             
+            // Show/hide Focus Area based on current view
             const focusArea = document.getElementById('focus-area-section');
             if (state.currentView === 'feed') {
                 focusArea.classList.remove('hidden');
@@ -986,6 +910,7 @@
                 focusArea.classList.add('hidden');
             }
             
+            // Render source list in Focus Areas (only for feed view)
             const sourceList = document.getElementById('source-list');
             sourceList.innerHTML = '';
             
@@ -1008,10 +933,12 @@
                 
                 btn.addEventListener('click', () => {
                     if (state.currentView === 'feed') {
+                        // Update active states
                         document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
                         btn.classList.add('active');
                         document.getElementById('all-topics-btn').classList.remove('active');
                         
+                        // Update feed filter
                         state.feedFilters.source = source.id;
                         renderArticles();
                     }
@@ -1020,6 +947,7 @@
                 sourceList.appendChild(btn);
             });
             
+            // Add click handler for "All AI Topics" button
             const allTopicsBtn = document.getElementById('all-topics-btn');
             allTopicsBtn.addEventListener('click', () => {
                 if (state.currentView === 'feed') {
@@ -1030,6 +958,7 @@
                 }
             });
             
+            // Set initial active state for "All AI Topics"
             if (state.currentView === 'feed' && state.feedFilters.source === 'all') {
                 allTopicsBtn.classList.add('active');
             }
